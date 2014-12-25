@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CruiserCommand", "Intermediate\ProjectFiles\CruiserCommand.vcxproj", "{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DebugGame Editor|Windows = DebugGame Editor|Windows
+		DebugGame|Windows = DebugGame|Windows
+		Development Editor|Windows = Development Editor|Windows
+		Development|Windows = Development|Windows
+		Shipping|Windows = Shipping|Windows
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.DebugGame Editor|Windows.ActiveCfg = DebugGame_Editor|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.DebugGame Editor|Windows.Build.0 = DebugGame_Editor|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.DebugGame|Windows.ActiveCfg = DebugGame_Game|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.DebugGame|Windows.Build.0 = DebugGame_Game|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.Development Editor|Windows.ActiveCfg = Development_Editor|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.Development Editor|Windows.Build.0 = Development_Editor|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.Development|Windows.ActiveCfg = Development_Game|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.Development|Windows.Build.0 = Development_Game|x64
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.Shipping|Windows.ActiveCfg = Shipping_Game|Win32
+		{541F4CEE-1391-4FD4-A08B-7C53AC2E0E6A}.Shipping|Windows.Build.0 = Shipping_Game|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+EndGlobal
