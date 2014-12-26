@@ -2,6 +2,7 @@
 
 #include "CruiserCommand.h"
 #include "CCPlayerController.h"
+#include "PlayerCamera.h"
 
 
 
@@ -12,7 +13,36 @@ ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitial
 	this->bEnableClickEvents = true;
 	this->bEnableMouseOverEvents = true;
 	this->bShowMouseCursor = true;
+	UE_LOG(LogTemp, Warning, TEXT("Player constructor!"));
+}
 
+void ACCPlayerController::SetupCamera() {
+	UE_LOG(LogTemp, Warning, TEXT("Camera setup"));
+	UWorld* const World = GetWorld();
+	if (World) {
+		UE_LOG(LogTemp, Warning, TEXT("Got world"));
+		camera = World->SpawnActor<APlayerCamera>();
+		if (camera) {
+			UE_LOG(LogTemp, Warning, TEXT("Got camera"));
+			FVector startLocation(-1893, -161, 1662);
+			UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *startLocation.ToString());
+			camera->SetActorLocation(startLocation);
+			FRotator startRot(-56, 0, 0);
+			camera->SetActorRotation(startRot);
+			this->SetViewTarget(camera);
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("GOT NO CAMERA"));
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("GOT NO WORLD"));
+	}
+
+}
+
+void ACCPlayerController::BeginPlay() {
+	SetupCamera();
 }
 
 void ACCPlayerController::SetupInputComponent() {

@@ -13,11 +13,15 @@ class CRUISERCOMMAND_API ACCPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-
 	ACCPlayerController(const FObjectInitializer& ObjectInitializer);
 
 public:
 
+	virtual void BeginPlay() override;
+
+	class APlayerCamera* camera;
+
+	void SetupCamera();
 	virtual void SetupInputComponent() override;
 
 	/** Called when you right click in the world to order the character to move */
