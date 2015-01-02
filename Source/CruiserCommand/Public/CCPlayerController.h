@@ -16,8 +16,10 @@ class CRUISERCOMMAND_API ACCPlayerController : public APlayerController
 	ACCPlayerController(const FObjectInitializer& ObjectInitializer);
 
 public:
+	FVector targetPos;
 
 	virtual void BeginPlay() override;
+	virtual void SetViewTarget(class AActor* NewViewTarget, FViewTargetTransitionParams TransitionParams = FViewTargetTransitionParams()) override;
 
 	class APlayerCamera* camera;
 
@@ -28,4 +30,9 @@ public:
 	void OrderMove();
 
 	
+	/** Navigate player to the given world location (Server Version) */
+	UFUNCTION(Reliable, Server, WithValidation)
+	void ServerSetNewMoveDestination(const FVector DestLocation);
+
+	void PlayerTick(float DeltaTime);
 };

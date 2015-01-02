@@ -21,6 +21,7 @@ ACruiserCommandCharacter::ACruiserCommandCharacter(const FObjectInitializer& Obj
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+	bReplicates = true;
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	

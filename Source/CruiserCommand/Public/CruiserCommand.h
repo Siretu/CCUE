@@ -3,6 +3,6 @@
 #ifndef __CRUISERCOMMAND_H__
 #define __CRUISERCOMMAND_H__
 
-#include "EngineMinimal.h"
+#include "Engine.h"
 
 #endif
