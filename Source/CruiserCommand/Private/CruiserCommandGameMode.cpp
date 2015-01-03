@@ -5,6 +5,7 @@
 #include "CruiserCommandCharacter.h"
 #include "CCPlayerController.h"
 #include "PlayerProxy.h"
+#include "CCHUD.h"
 
 ACruiserCommandGameMode::ACruiserCommandGameMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -20,4 +21,6 @@ ACruiserCommandGameMode::ACruiserCommandGameMode(const FObjectInitializer& Objec
 
 	// Use our custom PlayerController class
 	PlayerControllerClass = ACCPlayerController::StaticClass();
+
+	HUDClass = ACCHUD::StaticClass();	
 }

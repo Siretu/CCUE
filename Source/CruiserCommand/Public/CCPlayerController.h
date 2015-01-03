@@ -35,4 +35,10 @@ public:
 	void ServerSetNewMoveDestination(const FVector DestLocation);
 
 	void PlayerTick(float DeltaTime);
+
+	void PlayerZoomIn();
+	void PlayerZoomOut();
+
+	void CameraForward(float f);
+	void CameraRight(float f);
 };

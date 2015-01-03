@@ -28,11 +28,11 @@ void ACCPlayerController::SetupCamera() {
 		camera = World->SpawnActor<APlayerCamera>();
 		if (camera) {
 			UE_LOG(LogTemp, Warning, TEXT("Got camera"));
-			FVector startLocation(-1893, -161, 1662);
+			/*FVector startLocation(-1893, -161, 1662);
 			UE_LOG(LogTemp, Warning, TEXT("Camera Location: %s"), *startLocation.ToString());
 			camera->SetActorLocation(startLocation);
 			FRotator startRot(-56, 0, 0);
-			camera->SetActorRotation(startRot);
+			camera->SetActorRotation(startRot);*/
 			SetViewTarget(camera);
 		}
 		else {
@@ -86,6 +86,10 @@ void ACCPlayerController::SetupInputComponent() {
 	if (InputComponent != NULL) {
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent is not NULL!"));
 		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
+		InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
+		InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
+		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::CameraForward);
+		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::CameraRight);
 	}
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent is NULL!"));
@@ -107,16 +111,7 @@ void ACCPlayerController::OrderMove(){
 		{
 			targetPos = Hit.ImpactPoint - (*ObstacleItr)->GetTransform().GetLocation();
 		}
-		
-		//
-		// Hit.ImpactPoint is your world hit location
-
-	}/*
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("No hit found"));
-	}*/
-	
-
+	}
 }
 
 void ACCPlayerController::PlayerTick(float DeltaTime) {
@@ -130,5 +125,24 @@ void ACCPlayerController::PlayerTick(float DeltaTime) {
 			UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *worldPos.ToString());
 		}
 		ServerSetNewMoveDestination(worldPos);
+	}
+}
+
+
+void ACCPlayerController::PlayerZoomIn(){
+	camera->ZoomIn();
+}
+void ACCPlayerController::PlayerZoomOut(){
+	camera->ZoomOut();
+}
+
+void ACCPlayerController::CameraForward(float f){
+	if (camera) {
+		camera->CameraMove(f, EAxis::X);
+	}
+}
+void ACCPlayerController::CameraRight(float f){
+	if (camera) {
+		camera->CameraMove(f, EAxis::Y);
 	}
 }
