@@ -17,7 +17,6 @@ class CRUISERCOMMAND_API APlayerProxy : public APawn
 	GENERATED_UCLASS_BODY()
 
 public:
-
 	// Needed so we can pick up the class in the constructor and spawn it elsewhere
 	TSubclassOf<AActor> CharacterClass;
 
@@ -36,6 +35,4 @@ public:
 
 	// Used by the controller to get moving to work 
 	void MoveToLocation(const ACCPlayerController* controller, const FVector& vector);
-
-	//virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const;
 };

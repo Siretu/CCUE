@@ -17,28 +17,28 @@ class CRUISERCOMMAND_API ACCPlayerController : public APlayerController
 
 public:
 	FVector targetPos;
-
-	virtual void BeginPlay() override;
-	virtual void SetViewTarget(class AActor* NewViewTarget, FViewTargetTransitionParams TransitionParams = FViewTargetTransitionParams()) override;
-
 	class APlayerCamera* camera;
 
-	void SetupCamera();
+	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	void PlayerTick(float DeltaTime);
+	// Had to override SetViewTarget to prevent it being overwritten at the start of the game.
+	virtual void SetViewTarget(class AActor* NewViewTarget, FViewTargetTransitionParams TransitionParams = FViewTargetTransitionParams()) override;
+
+	/** Sets up the player camera. Spawns the camera class and sets the view target */
+	void SetupCamera();
 
 	/** Called when you right click in the world to order the character to move */
 	void OrderMove();
-
 	
 	/** Navigate player to the given world location (Server Version) */
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerSetNewMoveDestination(const FVector DestLocation);
 
-	void PlayerTick(float DeltaTime);
 
+	// Player camera functions. These exist because binding an axis input directly to the camera function seemed to fail.
 	void PlayerZoomIn();
 	void PlayerZoomOut();
-
-	void CameraForward(float f);
-	void CameraRight(float f);
+	void PlayerCameraForward(float f);
+	void PlayerCameraRight(float f);
 };

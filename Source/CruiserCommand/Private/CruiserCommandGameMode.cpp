@@ -10,17 +10,12 @@
 ACruiserCommandGameMode::ACruiserCommandGameMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	// set default pawn class to our Blueprinted character
-	/*static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/MyCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}*/
-
+	// set default pawn class to our Proxy character
 	DefaultPawnClass = APlayerProxy::StaticClass();
 
 	// Use our custom PlayerController class
 	PlayerControllerClass = ACCPlayerController::StaticClass();
 
+	// Use our custom HUD class
 	HUDClass = ACCHUD::StaticClass();	
 }

@@ -13,7 +13,4 @@ class CRUISERCOMMAND_API AShip : public APawn
 {
 	GENERATED_BODY()
 	
-	
-	
-	
 };

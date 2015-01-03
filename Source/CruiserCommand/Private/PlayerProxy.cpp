@@ -5,13 +5,7 @@
 #include "PlayerProxy.h"
 
 
-APlayerProxy::APlayerProxy(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer) {
-
-	// Don't rotate character to camera direction
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
+APlayerProxy::APlayerProxy(const FObjectInitializer& ObjectInitializer)	: Super(ObjectInitializer) {
 	bReplicates = true;
 
 	// It seems that without a RootComponent, we can't place the Actual Character easily
@@ -21,19 +15,15 @@ APlayerProxy::APlayerProxy(const FObjectInitializer& ObjectInitializer)
 	TouchCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
 	RootComponent = TouchCapsule;
 
-	if (Role == ROLE_Authority)
-	{
+	if (Role == ROLE_Authority)	{
 		static ConstructorHelpers::FObjectFinder<UClass> PlayerPawnBPClass(TEXT("/Game/Blueprints/MyCharacter.MyCharacter_C"));
 		CharacterClass = PlayerPawnBPClass.Object;
 	}
-
 }
 
-void APlayerProxy::BeginPlay()
-{
+void APlayerProxy::BeginPlay() {
 	Super::BeginPlay();
-	if (Role == ROLE_Authority)
-	{
+	if (Role == ROLE_Authority)	{
 		// Get current location of the Player Proxy
 		FVector Location = GetActorLocation();
 		FRotator Rotation = GetActorRotation();
@@ -50,15 +40,11 @@ void APlayerProxy::BeginPlay()
 		PlayerAI = GetWorld()->SpawnActor<AAIController>(GetActorLocation(), GetActorRotation());
 		PlayerAI->Possess(Character);
 	}
-
 }
 
-void APlayerProxy::Tick(float DeltaTime)
-{
-
+void APlayerProxy::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	if (Character)
-	{
+	if (Character) {
 		// Keep the Proxy in sync with the real character
 		FTransform CharTransform = Character->GetTransform();
 		FTransform MyTransform = GetTransform();
@@ -67,32 +53,21 @@ void APlayerProxy::Tick(float DeltaTime)
 		Transform.LerpTranslationScale3D(CharTransform, MyTransform, ScalarRegister(0.5f));
 
 		SetActorTransform(Transform);
-
 	}
 }
 
-void APlayerProxy::MoveToLocation(const ACCPlayerController* controller, const FVector& DestLocation)
-{
+void APlayerProxy::MoveToLocation(const ACCPlayerController* controller, const FVector& DestLocation) {
 	/** Looks easy - doesn't it.
 	*  What this does is to engage the AI to pathfind.
 	*  The AI will then "route" the character correctly.
-	*  The Proxy (and with it the camera), on each tick, moves to the location of the real character
+	*  The Proxy, on each tick, moves to the location of the real character
 	*
 	*  And thus, we get the illusion of moving with the Player Character
 	*/
-	UE_LOG(LogTemp, Warning, TEXT("Starting MoveToLocation"));
-	if (PlayerAI) {
-		UE_LOG(LogTemp, Warning, TEXT("Got playerAI"));
-	}
-	if (PlayerAI != NULL) {
-		UE_LOG(LogTemp, Warning, TEXT("Got playerAI a second time"));
-	}
 	PlayerAI->MoveToLocation(DestLocation);
 }
 
-void APlayerProxy::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
-{
-
+void APlayerProxy::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// Replicate to Everyone
