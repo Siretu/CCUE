@@ -2,11 +2,9 @@
 
 #include "CruiserCommand.h"
 #include "PlayerCamera.h"
-#include "Kismet/KismetMathLibrary.h"
 
 
-APlayerCamera::APlayerCamera(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer) {
+APlayerCamera::APlayerCamera(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 
 	// Initialize components
 	CapsuleComponent = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, ACharacter::CapsuleComponentName);
@@ -18,10 +16,10 @@ APlayerCamera::APlayerCamera(const FObjectInitializer& ObjectInitializer)
 
 	CameraRadius = 1024;
 	CameraZAngle = 0;
-	CameraHeightAngle = 70;
+	CameraHeightAngle =  -3.1415 / 6;
 	ZoomSpeed = 64;
 	MinRadius = 128;
-	MaxRadius = 2048;
+	MaxRadius = 4096;
 	MovementSpeed = 15;
 	EdgeForwardAxis = 0;
 	EdgeRightAxis = 0;

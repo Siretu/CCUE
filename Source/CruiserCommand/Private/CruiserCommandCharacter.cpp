@@ -3,6 +3,8 @@
 #include "CruiserCommand.h"
 #include "CruiserCommandCharacter.h"
 #include "CCPlayerController.h"
+#include "Ship.h"
+#include "PlayerProxy.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ACruiserCommandCharacter
@@ -20,12 +22,31 @@ ACruiserCommandCharacter::ACruiserCommandCharacter(const FObjectInitializer& Obj
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 	bReplicates = true;
-
+	
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+
+}
+
+void ACruiserCommandCharacter::BeginPlay() {
+	Super::BeginPlay();
+	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
+		UE_LOG(LogTemp, Warning, TEXT("Set ship"));
+		CurrentShip = *ObstacleItr;
+	}
+}
+
+void ACruiserCommandCharacter::Tick(float DeltaTime) {
+	//SetActorRotation(CurrentShip->GetTransform().GetRotation().Rotator());
+}
+
+ACCPlayerController* ACruiserCommandCharacter::GetPlayerController() {
+	ACCPlayerController* result = Cast<ACCPlayerController>(ParentProxy->GetController());
+	return result;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,6 +56,7 @@ void ACruiserCommandCharacter::SetupPlayerInputComponent(class UInputComponent* 
 	// Set up gameplay key bindings. Currently none
 	check(InputComponent);
 }
+
 
 void ACruiserCommandCharacter::TurnAtRate(float Rate) {
 	// calculate delta for this frame from the rate information

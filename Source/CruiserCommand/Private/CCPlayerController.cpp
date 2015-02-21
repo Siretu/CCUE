@@ -10,9 +10,7 @@
 
 
 
-ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
+ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	this->bEnableClickEvents = true;
 	this->bEnableMouseOverEvents = true;
 	this->bShowMouseCursor = true;
@@ -23,6 +21,7 @@ ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitial
 void ACCPlayerController::BeginPlay() {
 	Super::BeginPlay();
 	SetupCamera();
+	OrigPawn = GetPawn();
 }
 
 void ACCPlayerController::SetupInputComponent() {
@@ -32,6 +31,7 @@ void ACCPlayerController::SetupInputComponent() {
 		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
 		InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
 		InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
+		InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
 		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
 		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
 	}
@@ -39,7 +39,7 @@ void ACCPlayerController::SetupInputComponent() {
 
 void ACCPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
-	if (targetPos.X > 0) {			// TODO: VERY STUPID
+	if (1 == 1){//targetPos.Dist(targetPos,OrigPawn->GetTransform().GetLocation()) > 1) {			// TODO: VERY STUPID
 		FVector worldPos;
 		for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
 			worldPos = (*ObstacleItr)->GetTransform().GetLocation() + targetPos;
@@ -68,16 +68,30 @@ void ACCPlayerController::SetupCamera() {
 /** Called when you right click in the world to order the character to move */
 void ACCPlayerController::OrderMove(){
 	UE_LOG(LogTemp, Warning, TEXT("Ordering move!"));
-	//= trace to check if mouse pointer if over a terrain
+	// Trace to check if mouse pointer if over a terrain
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
 	//Did it hit something?
 	if (Hit.bBlockingHit) {
+		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
-
-		for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr)	{		// TODO: VERY STUPID
-			targetPos = Hit.ImpactPoint - (*ObstacleItr)->GetTransform().GetLocation();
+		if (Cast<AShip>(Hit.GetActor())) {
+			Possess(OrigPawn);
+			for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr)	{		// TODO: VERY STUPID
+				targetPos = Hit.ImpactPoint - (*ObstacleItr)->GetTransform().GetLocation();
+			}
+		} else {
+			UE_LOG(LogTemp, Warning, TEXT("Rotating towards"));
+			//GetPawn()->AddActorWorldRotation(FRotator(0,-5,0));
+			AShip* ship = Cast<AShip>(GetPawn());
+			if (ship) {
+				FRotator newRot = FRotationMatrix::MakeFromX(Hit.ImpactPoint - ship->GetActorLocation()).Rotator();
+				newRot.Roll = 0;
+				newRot.Pitch = 0;
+				//UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), newRot.Yaw);
+				ship->SetTargetRotation(newRot);
+			}
 		}
 	}
 }
@@ -100,6 +114,19 @@ void ACCPlayerController::ServerSetNewMoveDestination_Implementation(const FVect
 
 bool ACCPlayerController::ServerSetNewMoveDestination_Validate(const FVector DestLocation) {
 	return true;
+}
+
+void ACCPlayerController::ControlShip() {
+	if (GetPawn() == OrigPawn){
+		for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
+			UE_LOG(LogTemp, Warning, TEXT("Possessing"));
+			Possess(*ObstacleItr);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Possessing ship"));
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("Possessing pawn"));
+		Possess(OrigPawn);
+	}
 }
 
 void ACCPlayerController::PlayerZoomIn(){

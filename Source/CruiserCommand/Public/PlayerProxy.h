@@ -35,4 +35,8 @@ public:
 
 	// Used by the controller to get moving to work 
 	void MoveToLocation(const ACCPlayerController* controller, const FVector& vector);
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	void MoveForward();
 };

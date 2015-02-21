@@ -35,7 +35,8 @@ void APlayerProxy::BeginPlay() {
 
 		// Spawn the actual player character at the same location as the Proxy
 		Character = Cast<ACruiserCommandCharacter>(GetWorld()->SpawnActor(CharacterClass,&Location, &Rotation, SpawnParams));
-
+		Character->ParentProxy = this;
+		UE_LOG(LogTemp, Warning, TEXT("Linked: %s"), *this->GetName());
 		// We use the PlayerAI to control the Player Character for Navigation
 		PlayerAI = GetWorld()->SpawnActor<AAIController>(GetActorLocation(), GetActorRotation());
 		PlayerAI->Possess(Character);
@@ -51,6 +52,7 @@ void APlayerProxy::Tick(float DeltaTime) {
 
 		FTransform Transform;
 		Transform.LerpTranslationScale3D(CharTransform, MyTransform, ScalarRegister(0.5f));
+		Transform.SetRotation(Character->CurrentShip->GetTransform().GetRotation());
 
 		SetActorTransform(Transform);
 	}
@@ -64,7 +66,7 @@ void APlayerProxy::MoveToLocation(const ACCPlayerController* controller, const F
 	*
 	*  And thus, we get the illusion of moving with the Player Character
 	*/
-	PlayerAI->MoveToLocation(DestLocation);
+	PlayerAI->MoveToLocation(DestLocation,0.5);
 }
 
 void APlayerProxy::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
@@ -72,4 +74,14 @@ void APlayerProxy::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& O
 
 	// Replicate to Everyone
 	DOREPLIFETIME(APlayerProxy, Character);
+}
+
+void APlayerProxy::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
+	// Set up gameplay key bindings. Currently none
+	check(InputComponent);
+	InputComponent->BindAction("ShipForward", IE_Pressed, this, &APlayerProxy::MoveForward);
+}
+
+void APlayerProxy::MoveForward() {
+	UE_LOG(LogTemp, Warning, TEXT("Can't do that"));
 }

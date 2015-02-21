@@ -16,8 +16,9 @@ class CRUISERCOMMAND_API ACCPlayerController : public APlayerController
 	ACCPlayerController(const FObjectInitializer& ObjectInitializer);
 
 public:
-	FVector targetPos;
+	FVector targetPos;		// Local position on the ship to path towards.
 	class APlayerCamera* camera;
+	APawn* OrigPawn;		// The player's normal pawn that is controlled when the player isn't controlling a ship.
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -35,6 +36,8 @@ public:
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerSetNewMoveDestination(const FVector DestLocation);
 
+	/** Temporary function to change control from unit to ship. Might be used in the future but called by entering a console. */
+	void ControlShip();
 
 	// Player camera functions. These exist because binding an axis input directly to the camera function seemed to fail.
 	void PlayerZoomIn();
