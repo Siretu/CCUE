@@ -6,7 +6,6 @@
 #include "PlayerProxy.h"
 #include "Ship.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "Navigation/NavigationComponent.h"
 
 
 
