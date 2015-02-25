@@ -35,6 +35,8 @@ public:
 	/** Navigate player to the given world location (Server Version) */
 	UFUNCTION(Reliable, Server, WithValidation)
 	void ServerSetNewMoveDestination(const FVector DestLocation);
+	virtual bool ServerSetNewMoveDestination_Validate(const FVector DestLocation);
+	virtual void ServerSetNewMoveDestination_Implementation(const FVector DestLocation);
 
 	/** Temporary function to change control from unit to ship. Might be used in the future but called by entering a console. */
 	void ControlShip();
