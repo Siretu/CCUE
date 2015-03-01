@@ -37,6 +37,6 @@ protected:
 
 	// Getters & Setters
 public:
-	FRotator GetTargetRotation();
+	//FRotator GetTargetRotation();
 	void SetTargetRotation(FRotator newRot);
 };
