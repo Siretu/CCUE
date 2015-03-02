@@ -5,23 +5,23 @@
 #include "Ship.h"
 
 AShip::AShip(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
-	/*PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = true;
 	bMovingForward = false;
 	TargetRotation = this->GetActorRotation();
 	RotationSpeed = 150;
-	MovementSpeed = 1000;*/
+	MovementSpeed = 1000;
 }
 
 void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 	// Set up gameplay key bindings. Currently none
-	/*check(InputComponent);
+	check(InputComponent);
 
 	InputComponent->BindAction("ShipForward", IE_Pressed, this, &AShip::MoveForward);
-	InputComponent->BindAction("ShipForward", IE_Released, this, &AShip::StopMoveForward);*/
+	InputComponent->BindAction("ShipForward", IE_Released, this, &AShip::StopMoveForward);
 }
 
 void AShip::Tick(float delta) {
-	/*if (bMovingForward) {
+	if (bMovingForward) {
 		AddActorLocalOffset(FVector(MovementSpeed * delta, 0, 0));
 		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
 														// When moving navmeshes is a thing, this will probably not be needed anymore
@@ -37,27 +37,26 @@ void AShip::Tick(float delta) {
 				(*ObstacleItr)->SetActorRotation((*ObstacleItr)->GetActorRotation() + (nextRot - oldRot));
 			}
 		}
-
-	}*/
+	}
 }
 
 void AShip::MoveForward() {
-	//UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
-	//bMovingForward = true;
+	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
+	bMovingForward = true;
 }
 void AShip::StopMoveForward() {
-	//UE_LOG(LogTemp, Warning, TEXT("Stop Moving forward"));
-	//bMovingForward = false;
+	UE_LOG(LogTemp, Warning, TEXT("Stop Moving forward"));
+	bMovingForward = false;
 }
 
 void AShip::EnterShip(ACruiserCommandCharacter* character) {
-	//character->CurrentShip = this;
+	character->CurrentShip = this;
 	//character->SetActorLocation = this->GetActorLocation + this->EnterPosition;
 }
 
-/*FRotator AShip::GetTargetRotation() {
-	//return TargetRotation;
-}*/
+FRotator AShip::GetTargetRotation() {
+	return TargetRotation;
+}
 void AShip::SetTargetRotation(FRotator newRot){
-	//TargetRotation = newRot;
+	TargetRotation = newRot;
 }
