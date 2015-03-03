@@ -17,7 +17,7 @@ class ACruiserCommandCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	ACruiserCommandCharacter(const FObjectInitializer& ObjectInitializer);
+	ACruiserCommandCharacter();
 
 	APlayerProxy* ParentProxy;
 

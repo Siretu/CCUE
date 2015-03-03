@@ -21,6 +21,11 @@ void ACCPlayerController::BeginPlay() {
 	Super::BeginPlay();
 	SetupCamera();
 	OrigPawn = GetPawn();
+	if (GetPawn()) {
+		UE_LOG(LogTemp, Warning, TEXT("Got orig pawn!"));
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("No orig :(!"));
+	}
 }
 
 void ACCPlayerController::SetupInputComponent() {
@@ -38,6 +43,10 @@ void ACCPlayerController::SetupInputComponent() {
 
 void ACCPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
+	if (OrigPawn == NULL) {
+		OrigPawn = GetPawn();
+		UE_LOG(LogTemp, Warning, TEXT("GOT PAWN!"));
+	}
 	if (1 == 1){//targetPos.Dist(targetPos,OrigPawn->GetTransform().GetLocation()) > 1) {			// TODO: VERY STUPID
 		FVector worldPos;
 		for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
@@ -76,8 +85,10 @@ void ACCPlayerController::OrderMove(){
 		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
 		if (Cast<AShip>(Hit.GetActor())) {
+
 			Possess(OrigPawn);
 			for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr)	{		// TODO: VERY STUPID
+				UE_LOG(LogTemp, Warning, TEXT("Set targetPos"));
 				targetPos = Hit.ImpactPoint - (*ObstacleItr)->GetTransform().GetLocation();
 			}
 		} else {

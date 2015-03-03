@@ -17,7 +17,7 @@ class CRUISERCOMMAND_API AShip : public APawn
 {
 	GENERATED_BODY()
 
-	AShip(const FObjectInitializer& ObjectInitializer);
+	AShip();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	virtual void Tick(float delta) override;

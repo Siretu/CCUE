@@ -5,25 +5,25 @@
 #include "ShipConsole.h"
 
 
-AShipConsole::AShipConsole(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)  {
+AShipConsole::AShipConsole() {
 	PrimaryActorTick.bCanEverTick = true;
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 	RootComponent = Root;
-	Beacon = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("beacs"));
+	Beacon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("beacs"));
 	Beacon->SetRelativeScale3D(FVector(2, 2, 0.01));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Sphere(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
 	Beacon->SetStaticMesh(StaticMesh_Sphere.Object);
 	Beacon->AttachParent = RootComponent;
 
-	Console = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("console"));
+	Console = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("console"));
 	Console->SetRelativeScale3D(FVector(1, 0.8, 1));
 	Console->SetRelativeLocation(FVector(150, 0, 0));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Console(TEXT("StaticMesh'/Game/Models/SM_Console.SM_Console'"));
 	Console->SetStaticMesh(StaticMesh_Console.Object);
 	Console->AttachParent = RootComponent;
 
-	ActivationCapsule = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("dummy"));
+	ActivationCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("dummy"));
 	ActivationCapsule->AttachParent = RootComponent;
 	ActivationCapsule->SetRelativeScale3D(FVector(200, 200, 2));	
 	ActivationCapsule->OnComponentBeginOverlap.AddDynamic(this, &AShipConsole::EnterConsole);

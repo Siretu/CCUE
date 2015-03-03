@@ -31,7 +31,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Components)
 	UStaticMeshComponent* Console;
 
-	AShipConsole(const FObjectInitializer& ObjectInitializer);
+	AShipConsole();
 
 	void Tick(float DeltaTime) override;
 

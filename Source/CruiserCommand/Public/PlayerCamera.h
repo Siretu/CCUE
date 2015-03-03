@@ -13,7 +13,7 @@ class CRUISERCOMMAND_API APlayerCamera : public APawn
 {
 	GENERATED_BODY()
 
-	APlayerCamera(const FObjectInitializer& ObjectInitializer);
+	APlayerCamera();
 	
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCapsuleComponent* CapsuleComponent;

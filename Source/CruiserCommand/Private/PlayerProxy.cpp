@@ -5,11 +5,11 @@
 #include "PlayerProxy.h"
 
 
-APlayerProxy::APlayerProxy(const FObjectInitializer& ObjectInitializer)	: Super(ObjectInitializer) {
+APlayerProxy::APlayerProxy() {
 	bReplicates = true;
 
 	// It seems that without a RootComponent, we can't place the Actual Character easily
-	UCapsuleComponent* TouchCapsule = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, TEXT("dummy"));
+	UCapsuleComponent* TouchCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("dummy"));
 	TouchCapsule->InitCapsuleSize(1.0f, 1.0f);
 	TouchCapsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	TouchCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -45,7 +45,7 @@ void APlayerProxy::BeginPlay() {
 
 void APlayerProxy::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	if (Character) {
+	if (Character && Character->CurrentShip) {
 		// Keep the Proxy in sync with the real character
 		FTransform CharTransform = Character->GetTransform();
 		FTransform MyTransform = GetTransform();

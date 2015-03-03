@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////
 // ACruiserCommandCharacter
 
-ACruiserCommandCharacter::ACruiserCommandCharacter(const FObjectInitializer& ObjectInitializer)	: Super(ObjectInitializer) {
+ACruiserCommandCharacter::ACruiserCommandCharacter() {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -45,8 +45,14 @@ void ACruiserCommandCharacter::Tick(float DeltaTime) {
 }
 
 ACCPlayerController* ACruiserCommandCharacter::GetPlayerController() {
-	ACCPlayerController* result = Cast<ACCPlayerController>(ParentProxy->GetController());
-	return result;
+	if (ParentProxy) {
+		UE_LOG(LogTemp, Warning, TEXT("Got PC :D"));
+		UE_LOG(LogTemp, Warning, TEXT("With: %s"), *this->GetName());
+		ACCPlayerController* result = Cast<ACCPlayerController>(ParentProxy->GetController());
+		return result;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Woth: %s"), *this->GetName());
+	return NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////

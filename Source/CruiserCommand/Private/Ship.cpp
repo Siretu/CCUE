@@ -4,7 +4,7 @@
 #include "CruiserCommandCharacter.h"
 #include "Ship.h"
 
-AShip::AShip(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
+AShip::AShip() {
 	PrimaryActorTick.bCanEverTick = true;
 	bMovingForward = false;
 	TargetRotation = this->GetActorRotation();
@@ -23,7 +23,7 @@ void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 void AShip::Tick(float delta) {
 	if (bMovingForward) {
 		AddActorLocalOffset(FVector(MovementSpeed * delta, 0, 0));
-		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
+//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
 														// When moving navmeshes is a thing, this will probably not be needed anymore
 	}
 	//FQuat nextRot = FQuat::Slerp(TargetRotation, GetActorQuat(), delta);

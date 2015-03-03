@@ -4,11 +4,11 @@
 #include "PlayerCamera.h"
 
 
-APlayerCamera::APlayerCamera(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
+APlayerCamera::APlayerCamera() {
 
 	// Initialize components
-	CapsuleComponent = ObjectInitializer.CreateDefaultSubobject<UCapsuleComponent>(this, ACharacter::CapsuleComponentName);
-	FollowCamera = ObjectInitializer.CreateDefaultSubobject<UCameraComponent>(this, TEXT("FollowCamera"));
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(ACharacter::CapsuleComponentName);
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 
 	// Use capsule as root and parent for the follow camera.
 	RootComponent = CapsuleComponent;

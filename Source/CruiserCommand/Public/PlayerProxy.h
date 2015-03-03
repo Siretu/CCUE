@@ -14,9 +14,12 @@
 UCLASS()
 class CRUISERCOMMAND_API APlayerProxy : public APawn
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+
+	APlayerProxy();
+
 	// Needed so we can pick up the class in the constructor and spawn it elsewhere
 	TSubclassOf<AActor> CharacterClass;
 
