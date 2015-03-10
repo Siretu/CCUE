@@ -5,6 +5,8 @@
 #include "Ship.h"
 
 AShip::AShip() {
+	bReplicates = true;
+
 	PrimaryActorTick.bCanEverTick = true;
 	bMovingForward = false;
 	TargetRotation = this->GetActorRotation();
@@ -23,8 +25,8 @@ void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 void AShip::Tick(float delta) {
 	if (bMovingForward) {
 		AddActorLocalOffset(FVector(MovementSpeed * delta, 0, 0));
-//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
-														// When moving navmeshes is a thing, this will probably not be needed anymore
+		//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
+		// When moving navmeshes is a thing, this will probably not be needed anymore
 	}
 	//FQuat nextRot = FQuat::Slerp(TargetRotation, GetActorQuat(), delta);
 	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), TargetRotation, delta, RotationSpeed);
@@ -40,14 +42,24 @@ void AShip::Tick(float delta) {
 	}
 }
 
-void AShip::MoveForward() {
+void AShip::MoveForward_Implementation() {
 	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
 	bMovingForward = true;
 }
-void AShip::StopMoveForward() {
+
+bool AShip::MoveForward_Validate() {
+	return true;
+}
+
+void AShip::StopMoveForward_Implementation() {
 	UE_LOG(LogTemp, Warning, TEXT("Stop Moving forward"));
 	bMovingForward = false;
 }
+
+bool AShip::StopMoveForward_Validate() {
+	return true;
+}
+
 
 void AShip::EnterShip(ACruiserCommandCharacter* character) {
 	character->CurrentShip = this;
@@ -57,6 +69,19 @@ void AShip::EnterShip(ACruiserCommandCharacter* character) {
 FRotator AShip::GetTargetRotation() {
 	return TargetRotation;
 }
-void AShip::SetTargetRotation(FRotator newRot){
+
+void AShip::SetTargetRotation_Implementation(FRotator newRot){
 	TargetRotation = newRot;
+}
+
+bool AShip::SetTargetRotation_Validate(FRotator newRot) {
+	return true;
+}
+
+void AShip::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to Everyone
+	DOREPLIFETIME(AShip, TargetRotation);
+	DOREPLIFETIME(AShip, bMovingForward);
 }
