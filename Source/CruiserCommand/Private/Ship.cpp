@@ -5,7 +5,7 @@
 #include "Ship.h"
 
 AShip::AShip() {
-	bReplicates = true;
+	//bReplicates = true;
 
 	PrimaryActorTick.bCanEverTick = true;
 	bMovingForward = false;
@@ -30,6 +30,7 @@ void AShip::Tick(float delta) {
 	}
 	//FQuat nextRot = FQuat::Slerp(TargetRotation, GetActorQuat(), delta);
 	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), TargetRotation, delta, RotationSpeed);
+	UE_LOG(LogTemp, Warning, TEXT("Rotation speed: %f"), (GetActorRotation() - TargetRotation).Yaw);
 	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.001) {
 		UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
 		FRotator oldRot = GetActorRotation();

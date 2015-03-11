@@ -13,19 +13,15 @@ ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitial
 	this->bEnableClickEvents = true;
 	this->bEnableMouseOverEvents = true;
 	this->bShowMouseCursor = true;
+
 	UE_LOG(LogTemp, Warning, TEXT("Player constructor!"));
 	camera = NULL;
+	bControllingShip = false;
 }
 
 void ACCPlayerController::BeginPlay() {
 	Super::BeginPlay();
 	SetupCamera();
-	OrigPawn = GetPawn();
-	if (GetPawn()) {
-		UE_LOG(LogTemp, Warning, TEXT("Got orig pawn!"));
-	} else {
-		UE_LOG(LogTemp, Warning, TEXT("No orig :(!"));
-	}
 }
 
 void ACCPlayerController::SetupInputComponent() {
@@ -35,7 +31,7 @@ void ACCPlayerController::SetupInputComponent() {
 		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
 		InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
 		InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
-		InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
+		//InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
 		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
 		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
 	}
@@ -43,17 +39,11 @@ void ACCPlayerController::SetupInputComponent() {
 
 void ACCPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
-	if (OrigPawn == NULL) {
-		OrigPawn = GetPawn();
-		UE_LOG(LogTemp, Warning, TEXT("GOT PAWN!"));
+	FVector worldPos;
+	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
+		worldPos = (*ObstacleItr)->GetTransform().GetLocation() + targetPos;
 	}
-	if (1 == 1){//targetPos.Dist(targetPos,OrigPawn->GetTransform().GetLocation()) > 1) {			// TODO: VERY STUPID
-		FVector worldPos;
-		for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
-			worldPos = (*ObstacleItr)->GetTransform().GetLocation() + targetPos;
-		}
-		ServerSetNewMoveDestination(worldPos);
-	}
+	ServerSetNewMoveDestination(worldPos);
 }
 
 
@@ -85,21 +75,24 @@ void ACCPlayerController::OrderMove(){
 		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
 		if (Cast<AShip>(Hit.GetActor())) {
-
-			Possess(OrigPawn);
+			UE_LOG(LogTemp, Warning, TEXT("Foo"));
+			UE_LOG(LogTemp, Warning, TEXT("Bar"));
 			for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr)	{		// TODO: VERY STUPID
-				UE_LOG(LogTemp, Warning, TEXT("Set targetPos"));
-				targetPos = Hit.ImpactPoint - (*ObstacleItr)->GetTransform().GetLocation();
+				FVector temp = Hit.ImpactPoint - (*ObstacleItr)->GetTransform().GetLocation();
+				SetTargetPos(temp);
+				targetPos = temp;
+
+				UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
 			}
 		} else {
 			UE_LOG(LogTemp, Warning, TEXT("Rotating towards"));
-			//GetPawn()->AddActorWorldRotation(FRotator(0,-5,0));
-			AShip* ship = Cast<AShip>(GetPawn());
+			AShip* ship = GetCurrentShip();
 			if (ship) {
+				UE_LOG(LogTemp, Warning, TEXT("Got ship"));
 				FRotator newRot = FRotationMatrix::MakeFromX(Hit.ImpactPoint - ship->GetActorLocation()).Rotator();
 				newRot.Roll = 0;
 				newRot.Pitch = 0;
-				//UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), newRot.Yaw);
+				UE_LOG(LogTemp, Warning, TEXT("Rotating aim: %f"), newRot.Yaw);
 				ship->SetTargetRotation(newRot);
 			}
 		}
@@ -109,34 +102,32 @@ void ACCPlayerController::OrderMove(){
 /* Actual implementation of the ServerSetMoveDestination method */
 void ACCPlayerController::ServerSetNewMoveDestination_Implementation(const FVector DestLocation)
 {
+
 	APlayerProxy* Pawn = Cast<APlayerProxy>(GetPawn());
+	//UE_LOG(LogTemp, Warning, TEXT("b"));
 	if (Pawn) {
+		//UE_LOG(LogTemp, Warning, TEXT("c"));
 		UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
 		float const Distance = FVector::Dist(DestLocation, Pawn->GetActorLocation());
 
 		// We need to issue move command only if far enough in order for walk animation to play correctly
 		if (NavSys && (Distance > 120.0f)) {
 			Pawn->MoveToLocation(this, DestLocation);
+			//UE_LOG(LogTemp, Warning, TEXT("d"));
 		}
 	}
-
 }
 
 bool ACCPlayerController::ServerSetNewMoveDestination_Validate(const FVector DestLocation) {
 	return true;
 }
 
-void ACCPlayerController::ControlShip() {
-	if (GetPawn() == OrigPawn){
-		for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
-			UE_LOG(LogTemp, Warning, TEXT("Possessing"));
-			Possess(*ObstacleItr);
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Possessing ship"));
-	} else {
-		UE_LOG(LogTemp, Warning, TEXT("Possessing pawn"));
-		Possess(OrigPawn);
-	}
+void ACCPlayerController::SetTargetPos_Implementation(FVector pos) {
+	targetPos = pos;
+}
+
+bool ACCPlayerController::SetTargetPos_Validate(FVector pos) {
+	return true;
 }
 
 void ACCPlayerController::PlayerZoomIn(){
@@ -155,4 +146,22 @@ void ACCPlayerController::PlayerCameraRight(float f){
 	if (camera) {
 		camera->CameraMove(f, EAxis::Y);
 	}
+}
+
+void ACCPlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to Everyone
+	DOREPLIFETIME(ACCPlayerController, targetPos);
+}
+
+AShip* ACCPlayerController::GetCurrentShip() {
+	APawn* p = GetPawn();
+	if (p != NULL) {
+		APlayerProxy* temp = Cast<APlayerProxy>(p);
+		if (temp && temp->Character) {
+			return temp->Character->CurrentShip;
+		}
+	}
+	return NULL;
 }

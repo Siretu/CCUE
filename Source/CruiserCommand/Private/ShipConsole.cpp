@@ -47,7 +47,7 @@ void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCompon
 		ACCPlayerController* PC = c->GetPlayerController();
 		if (PC) {
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
-			PC->Possess(c->CurrentShip);
+			//PC->Possess(c->CurrentShip);
 		}
 	}
 	

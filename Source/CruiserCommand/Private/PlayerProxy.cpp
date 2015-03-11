@@ -54,7 +54,7 @@ void APlayerProxy::Tick(float DeltaTime) {
 		Transform.LerpTranslationScale3D(CharTransform, MyTransform, ScalarRegister(0.5f));
 		Transform.SetRotation(Character->CurrentShip->GetTransform().GetRotation());
 
-		SetActorTransform(Transform);
+		//SetActorTransform(Transform);
 	}
 }
 
