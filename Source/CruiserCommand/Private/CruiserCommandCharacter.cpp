@@ -46,14 +46,11 @@ void ACruiserCommandCharacter::Tick(float DeltaTime) {
 }
 
 ACCPlayerController* ACruiserCommandCharacter::GetPlayerController() {
-	if (ParentProxy) {
-		UE_LOG(LogTemp, Warning, TEXT("Got PC :D"));
-		UE_LOG(LogTemp, Warning, TEXT("With: %s"), *this->GetName());
-		ACCPlayerController* result = Cast<ACCPlayerController>(ParentProxy->GetController());
-		return result;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("Woth: %s"), *this->GetName());
-	return NULL;
+	return PC;
+}
+
+void ACruiserCommandCharacter::SetPlayerController(ACCPlayerController* pc) {
+	PC = pc;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -47,6 +47,8 @@ void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCompon
 		ACCPlayerController* PC = c->GetPlayerController();
 		if (PC) {
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
+			UE_LOG(LogTemp, Warning, TEXT("Casted PC: %s"), *PC->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("PC: %s"), *PC->GetNetOwningPlayer()->GetName());
 			PC->bControllingShip = true;
 		}
 	}

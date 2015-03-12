@@ -41,6 +41,7 @@ void ACCPlayerController::BeginPlay() {
 
 		// Spawn the actual player character at the location
 		ACruiserCommandCharacter* Character = Cast<ACruiserCommandCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParams));
+		Character->SetPlayerController(this);
 		//Character->ParentProxy = this;
 		UE_LOG(LogTemp, Warning, TEXT("Linked: %s"), *this->GetName());
 		// We use the Control to control the Player Character for Navigation
@@ -65,6 +66,12 @@ void ACCPlayerController::SetupInputComponent() {
 
 void ACCPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
+	int i = 0;
+	for (TActorIterator<ACCPlayerController> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
+		i++;
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("PC: %s"),*GetNetOwningPlayer()->GetName());
 	if (GetPawn()) {
 		PlayerCameraManager->SetViewTarget(GetPawn());
 	}
@@ -178,10 +185,10 @@ void ACCPlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimePrope
 
 AShip* ACCPlayerController::GetCurrentShip() {
 	APawn* p = GetPawn();
-	if (p != NULL) {
-		APlayerProxy* temp = Cast<APlayerProxy>(p);
-		if (temp && temp->Character) {
-			return temp->Character->CurrentShip;
+	if (Control && Control->GetPawn()) {
+		ACruiserCommandCharacter* temp = Cast<ACruiserCommandCharacter>(Control->GetPawn());
+		if (temp) {
+			return temp->CurrentShip;
 		}
 	}
 	return NULL;

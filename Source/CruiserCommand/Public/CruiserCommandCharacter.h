@@ -19,9 +19,9 @@ class ACruiserCommandCharacter : public ACharacter
 public:
 	ACruiserCommandCharacter();
 
-	APlayerProxy* ParentProxy;
-
+	
 	ACCPlayerController* GetPlayerController();
+	void SetPlayerController(ACCPlayerController* pc);
 
 	virtual void BeginPlay() override;
 
@@ -39,7 +39,7 @@ public:
 	AShip* CurrentShip;
 
 protected:
-
+	ACCPlayerController* PC;
 	/** 
 	 * Called via input to turn at a given rate. 
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
