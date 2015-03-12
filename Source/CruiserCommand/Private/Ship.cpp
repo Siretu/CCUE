@@ -5,7 +5,7 @@
 #include "Ship.h"
 
 AShip::AShip() {
-	//bReplicates = true;
+	bReplicates = true;
 
 	PrimaryActorTick.bCanEverTick = true;
 	bMovingForward = false;
@@ -26,11 +26,13 @@ void AShip::Tick(float delta) {
 	if (bMovingForward) {
 		AddActorLocalOffset(FVector(MovementSpeed * delta, 0, 0));
 		//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
-		// When moving navmeshes is a thing, this will probably not be needed anymore
+																// When moving navmeshes is a thing, this will probably not be needed anymore
 	}
 	//FQuat nextRot = FQuat::Slerp(TargetRotation, GetActorQuat(), delta);
 	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), TargetRotation, delta, RotationSpeed);
-	UE_LOG(LogTemp, Warning, TEXT("Rotation speed: %f"), (GetActorRotation() - TargetRotation).Yaw);
+	if (Role == ROLE_Authority)	{
+		//UE_LOG(LogTemp, Warning, TEXT("Rotation speed: %f"), TargetRotation.Yaw);
+	}
 	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.001) {
 		UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
 		FRotator oldRot = GetActorRotation();
@@ -71,13 +73,19 @@ FRotator AShip::GetTargetRotation() {
 	return TargetRotation;
 }
 
+/*void AShip::SetTargetRotation(FRotator newRot) {
+	TargetRotation = newRot;
+	UE_LOG(LogTemp, Warning, TEXT("Set rotation to: %f"), newRot.Yaw);
+}*/
+/*
 void AShip::SetTargetRotation_Implementation(FRotator newRot){
+	UE_LOG(LogTemp, Warning, TEXT("Set rotation to: %f"), newRot.Yaw);
 	TargetRotation = newRot;
 }
 
 bool AShip::SetTargetRotation_Validate(FRotator newRot) {
 	return true;
-}
+}*/
 
 void AShip::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

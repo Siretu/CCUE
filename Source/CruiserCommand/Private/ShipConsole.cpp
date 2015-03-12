@@ -47,7 +47,7 @@ void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCompon
 		ACCPlayerController* PC = c->GetPlayerController();
 		if (PC) {
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
-			//PC->Possess(c->CurrentShip);
+			PC->bControllingShip = true;
 		}
 	}
 	
@@ -58,6 +58,12 @@ void AShipConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveCompone
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Left console! %s"), *OtherActor->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
+		ACCPlayerController* PC = c->GetPlayerController();
+		if (PC) {
+			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
+			PC->bControllingShip = false;
+		}
 	}
 }
 

@@ -42,19 +42,17 @@ public:
 	float MovementSpeed;
 	FVector EnterPosition; // When a character enters the ship, it will be transferred to this position. Not used yet.
 
-
-
 	// Getters & Setters
 	FRotator GetTargetRotation();
 
-	UFUNCTION(Reliable, Server, WithValidation)
+	/*UFUNCTION(Reliable, Server, WithValidation)
 	void SetTargetRotation(FRotator newRot);
 	virtual bool SetTargetRotation_Validate(FRotator newRot);
-	virtual void SetTargetRotation_Implementation(FRotator newRot);
+	virtual void SetTargetRotation_Implementation(FRotator newRot);*/
 
-protected:
 	UPROPERTY(Replicated)
 	FRotator TargetRotation;
 
+protected:
 
 };

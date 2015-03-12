@@ -23,7 +23,8 @@ APlayerProxy::APlayerProxy() {
 
 void APlayerProxy::BeginPlay() {
 	Super::BeginPlay();
-	if (Role == ROLE_Authority)	{
+	/*if (Role == ROLE_Authority)	{
+		UE_LOG(LogTemp, Warning, TEXT("UNIQUE STRING ASDASD"));
 		// Get current location of the Player Proxy
 		FVector Location = GetActorLocation();
 		FRotator Rotation = GetActorRotation();
@@ -40,7 +41,7 @@ void APlayerProxy::BeginPlay() {
 		// We use the PlayerAI to control the Player Character for Navigation
 		PlayerAI = GetWorld()->SpawnActor<AAIController>(GetActorLocation(), GetActorRotation());
 		PlayerAI->Possess(Character);
-	}
+	}*/
 }
 
 void APlayerProxy::Tick(float DeltaTime) {
@@ -66,7 +67,18 @@ void APlayerProxy::MoveToLocation(const ACCPlayerController* controller, const F
 	*
 	*  And thus, we get the illusion of moving with the Player Character
 	*/
-	PlayerAI->MoveToLocation(DestLocation,0.5);
+	//PlayerAI->MoveToLocation(DestLocation,0.5);
+	ACCPlayerController* CCCont = Cast<ACCPlayerController>(GetController());
+	if (CCCont != NULL) {
+		AAIController* AICont = Cast<AAIController>(CCCont);
+		if (AICont != NULL) {
+			UE_LOG(LogTemp, Warning, TEXT("ALL CASTS SUCCEEDED"));
+		} else {
+			UE_LOG(LogTemp, Warning, TEXT("AWWW AI CAST FAILED"));
+		}
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("AWWW PLAYER CAST FAILED"));
+	}
 }
 
 void APlayerProxy::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {

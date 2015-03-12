@@ -13,15 +13,41 @@ ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitial
 	this->bEnableClickEvents = true;
 	this->bEnableMouseOverEvents = true;
 	this->bShowMouseCursor = true;
+	this->bAutoManageActiveCameraTarget = false;
 
 	UE_LOG(LogTemp, Warning, TEXT("Player constructor!"));
 	camera = NULL;
 	bControllingShip = false;
+	if (Role == ROLE_Authority)	{
+		static ConstructorHelpers::FObjectFinder<UClass> PlayerPawnBPClass(TEXT("/Game/Blueprints/MyCharacter.MyCharacter_C"));
+		CharacterClass = PlayerPawnBPClass.Object;
+	}
 }
 
 void ACCPlayerController::BeginPlay() {
 	Super::BeginPlay();
-	SetupCamera();
+	if (GetPawn()) {
+		PlayerCameraManager->SetViewTarget(GetPawn());
+	}
+	if (Role == ROLE_Authority)	{
+
+		FVector Location = FVector(0, 0, 96);
+		FRotator Rotation = FRotator(0, 0, 0);
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = Instigator;
+		SpawnParams.bNoCollisionFail = true;
+
+		// Spawn the actual player character at the location
+		ACruiserCommandCharacter* Character = Cast<ACruiserCommandCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParams));
+		//Character->ParentProxy = this;
+		UE_LOG(LogTemp, Warning, TEXT("Linked: %s"), *this->GetName());
+		// We use the Control to control the Player Character for Navigation
+		Control = GetWorld()->SpawnActor<AAIController>(Location, Rotation);
+		Control->Possess(Character);
+	}
+	//SetupCamera();
 }
 
 void ACCPlayerController::SetupInputComponent() {
@@ -29,8 +55,8 @@ void ACCPlayerController::SetupInputComponent() {
 	if (InputComponent != NULL) {
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent is not NULL!"));
 		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
-		InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
-		InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
+		//InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
+		//InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
 		//InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
 		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
 		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
@@ -39,6 +65,10 @@ void ACCPlayerController::SetupInputComponent() {
 
 void ACCPlayerController::PlayerTick(float DeltaTime) {
 	Super::PlayerTick(DeltaTime);
+	if (GetPawn()) {
+		PlayerCameraManager->SetViewTarget(GetPawn());
+	}
+	
 	FVector worldPos;
 	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
 		worldPos = (*ObstacleItr)->GetTransform().GetLocation() + targetPos;
@@ -46,18 +76,12 @@ void ACCPlayerController::PlayerTick(float DeltaTime) {
 	ServerSetNewMoveDestination(worldPos);
 }
 
-
-
-void ACCPlayerController::SetViewTarget(class AActor* NewViewTarget, FViewTargetTransitionParams TransitionParams) {
-	// Something overwrote the view target at the start of the game in networked game. This is here to prevent this.
-	Super::SetViewTarget(camera);
-}
-
 /** Sets up the player camera. Spawns the camera class and sets the view target */
 void ACCPlayerController::SetupCamera() {
 	if (GetWorld()) {
 		camera = GetWorld()->SpawnActor<APlayerCamera>();
 		if (camera) {
+			UE_LOG(LogTemp, Warning, TEXT("Created camera!"));
 			SetViewTarget(camera);
 		}
 	}
@@ -84,17 +108,20 @@ void ACCPlayerController::OrderMove(){
 
 				UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
 			}
-		} else {
+		} else if (bControllingShip == true) {
 			UE_LOG(LogTemp, Warning, TEXT("Rotating towards"));
 			AShip* ship = GetCurrentShip();
-			if (ship) {
-				UE_LOG(LogTemp, Warning, TEXT("Got ship"));
+			if (ship != NULL) {
+				UE_LOG(LogTemp, Warning, TEXT("Got ship: %s"),*ship->GetName());
 				FRotator newRot = FRotationMatrix::MakeFromX(Hit.ImpactPoint - ship->GetActorLocation()).Rotator();
 				newRot.Roll = 0;
 				newRot.Pitch = 0;
+				
+				SetShipTargetRotation(ship, newRot);
 				UE_LOG(LogTemp, Warning, TEXT("Rotating aim: %f"), newRot.Yaw);
-				ship->SetTargetRotation(newRot);
 			}
+		} else {
+			UE_LOG(LogTemp, Warning, TEXT("Doing nothing"));
 		}
 	}
 }
@@ -102,19 +129,13 @@ void ACCPlayerController::OrderMove(){
 /* Actual implementation of the ServerSetMoveDestination method */
 void ACCPlayerController::ServerSetNewMoveDestination_Implementation(const FVector DestLocation)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("c"));
+	//UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
+	float const Distance = FVector::Dist(DestLocation, Control->GetPawn()->GetActorLocation());
 
-	APlayerProxy* Pawn = Cast<APlayerProxy>(GetPawn());
-	//UE_LOG(LogTemp, Warning, TEXT("b"));
-	if (Pawn) {
-		//UE_LOG(LogTemp, Warning, TEXT("c"));
-		UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-		float const Distance = FVector::Dist(DestLocation, Pawn->GetActorLocation());
-
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if (NavSys && (Distance > 120.0f)) {
-			Pawn->MoveToLocation(this, DestLocation);
-			//UE_LOG(LogTemp, Warning, TEXT("d"));
-		}
+	// We need to issue move command only if far enough in order for walk animation to play correctly
+	if (Distance > 120.0f) {
+		Control->MoveToLocation(DestLocation);
 	}
 }
 
@@ -164,4 +185,15 @@ AShip* ACCPlayerController::GetCurrentShip() {
 		}
 	}
 	return NULL;
+}
+
+void ACCPlayerController::SetShipTargetRotation_Implementation(AShip* ship, FRotator newRot){
+	UE_LOG(LogTemp, Warning, TEXT("Set rotation to: %f"), newRot.Yaw);
+	if (ship != NULL) {
+		ship->TargetRotation = newRot;
+	}
+}
+
+bool ACCPlayerController::SetShipTargetRotation_Validate(AShip* ship, FRotator newRot) {
+	return true;
 }

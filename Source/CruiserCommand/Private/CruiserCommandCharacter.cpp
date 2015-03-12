@@ -8,6 +8,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // ACruiserCommandCharacter
+// -- Currently just a visual class or something. It's weird.
 
 ACruiserCommandCharacter::ACruiserCommandCharacter() {
 	// Set size for collision capsule

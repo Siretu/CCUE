@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "UnrealNetwork.h"
 #include "Ship.h"
+#include "AIController.h"
 #include "CCPlayerController.generated.h"
 
 /**
@@ -22,13 +23,14 @@ public:
 	FVector targetPos;		// Local position on the ship to path towards.
 	class APlayerCamera* camera;
 
+	TSubclassOf<AActor> CharacterClass;
+	AAIController* Control;
+
 	bool bControllingShip;
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	void PlayerTick(float DeltaTime);
-	// Had to override SetViewTarget to prevent it being overwritten at the start of the game.
-	virtual void SetViewTarget(class AActor* NewViewTarget, FViewTargetTransitionParams TransitionParams = FViewTargetTransitionParams()) override;
 
 	/** Sets up the player camera. Spawns the camera class and sets the view target */
 	void SetupCamera();
@@ -55,4 +57,11 @@ public:
 	void PlayerCameraRight(float f);
 
 	AShip* GetCurrentShip();
+
+
+	/** Sets the player's current ship's navigation. This should be in AShip, but RPCs don't seem to work when called from a different class. E.g: ship->SetTargetRotation doesn't work */
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SetShipTargetRotation(AShip* s, FRotator newRot);
+	virtual bool SetShipTargetRotation_Validate(AShip* s, FRotator newRot);
+	virtual void SetShipTargetRotation_Implementation(AShip* s, FRotator newRot);
 };

@@ -8,7 +8,10 @@ APlayerCamera::APlayerCamera() {
 
 	// Initialize components
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(ACharacter::CapsuleComponentName);
+	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+
+	UE_LOG(LogTemp, Warning, TEXT("Camera constructed"));
 
 	// Use capsule as root and parent for the follow camera.
 	RootComponent = CapsuleComponent;
