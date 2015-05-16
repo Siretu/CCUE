@@ -24,13 +24,16 @@ public:
 	class APlayerCamera* camera;
 
 	TSubclassOf<AActor> CharacterClass;
-	AAIController* Control;
+
+	AAIController* Control;	// Controller of character. Only exists server-side
+
+	
 
 	bool bControllingShip;
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-	void PlayerTick(float DeltaTime);
+	void Tick(float DeltaTime);
 
 	/** Sets up the player camera. Spawns the camera class and sets the view target */
 	void SetupCamera();

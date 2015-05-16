@@ -47,8 +47,9 @@ void ACCPlayerController::BeginPlay() {
 		// We use the Control to control the Player Character for Navigation
 		Control = GetWorld()->SpawnActor<AAIController>(Location, Rotation);
 		Control->Possess(Character);
+		targetPos = Location;
 	}
-	//SetupCamera();
+	SetupCamera();
 }
 
 void ACCPlayerController::SetupInputComponent() {
@@ -64,21 +65,20 @@ void ACCPlayerController::SetupInputComponent() {
 	}
 }
 
-void ACCPlayerController::PlayerTick(float DeltaTime) {
-	Super::PlayerTick(DeltaTime);
-	int i = 0;
-	for (TActorIterator<ACCPlayerController> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
-		i++;
+void ACCPlayerController::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	if (Control && Control->GetPawn() && Cast<ACruiserCommandCharacter>(Control->GetPawn())->GetPlayerController() == NULL) {
+		Cast<ACruiserCommandCharacter>(Control->GetPawn())->SetPlayerController(this);
 	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("PC: %s"),*GetNetOwningPlayer()->GetName());
+
 	if (GetPawn()) {
 		PlayerCameraManager->SetViewTarget(GetPawn());
 	}
 	
 	FVector worldPos;
-	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
-		worldPos = (*ObstacleItr)->GetTransform().GetLocation() + targetPos;
+
+	if (GetCurrentShip()) {
+		worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos;
 	}
 	ServerSetNewMoveDestination(worldPos);
 }
@@ -106,15 +106,12 @@ void ACCPlayerController::OrderMove(){
 		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
 		if (Cast<AShip>(Hit.GetActor())) {
-			UE_LOG(LogTemp, Warning, TEXT("Foo"));
-			UE_LOG(LogTemp, Warning, TEXT("Bar"));
-			for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr)	{		// TODO: VERY STUPID
-				FVector temp = Hit.ImpactPoint - (*ObstacleItr)->GetTransform().GetLocation();
-				SetTargetPos(temp);
-				targetPos = temp;
+			FVector temp = Hit.ImpactPoint - GetCurrentShip()->GetTransform().GetLocation();
+			SetTargetPos(temp);
+			targetPos = temp;
 
-				UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
-			}
+			UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
+
 		} else if (bControllingShip == true) {
 			UE_LOG(LogTemp, Warning, TEXT("Rotating towards"));
 			AShip* ship = GetCurrentShip();
@@ -134,17 +131,18 @@ void ACCPlayerController::OrderMove(){
 }
 
 /* Actual implementation of the ServerSetMoveDestination method */
-void ACCPlayerController::ServerSetNewMoveDestination_Implementation(const FVector DestLocation)
-{
-	//UE_LOG(LogTemp, Warning, TEXT("c"));
-	//UNavigationSystem* const NavSys = GetWorld()->GetNavigationSystem();
-	float const Distance = FVector::Dist(DestLocation, Control->GetPawn()->GetActorLocation());
+void ACCPlayerController::ServerSetNewMoveDestination_Implementation(const FVector DestLocation) {
+	float Distance = 0;
+	if (Control && Control->GetPawn()) {
+		Distance = FVector::Dist(DestLocation, Control->GetPawn()->GetActorLocation());
+	}
 
 	// We need to issue move command only if far enough in order for walk animation to play correctly
-	if (Distance > 120.0f) {
+	if (Control && Distance > 120.0f) {
 		Control->MoveToLocation(DestLocation);
 	}
 }
+
 
 bool ACCPlayerController::ServerSetNewMoveDestination_Validate(const FVector DestLocation) {
 	return true;
@@ -166,7 +164,9 @@ void ACCPlayerController::PlayerZoomOut(){
 }
 
 void ACCPlayerController::PlayerCameraForward(float f){
+	UE_LOG(LogTemp, Warning, TEXT("Forward"));
 	if (camera) {
+		UE_LOG(LogTemp, Warning, TEXT("Forward inside"));
 		camera->CameraMove(f, EAxis::X);
 	}
 }
@@ -185,9 +185,13 @@ void ACCPlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimePrope
 
 AShip* ACCPlayerController::GetCurrentShip() {
 	APawn* p = GetPawn();
-	if (Control && Control->GetPawn()) {
+	UE_LOG(LogTemp, Warning, TEXT("GetCurrentShip()"));
+	if (Control && Control->GetPawn()) { // Problem: Control is only defined server-side so we cant get the pawn.
+		UE_LOG(LogTemp, Warning, TEXT("Got control"));
 		ACruiserCommandCharacter* temp = Cast<ACruiserCommandCharacter>(Control->GetPawn());
+		UE_LOG(LogTemp, Warning, TEXT("Getting Pawn"));
 		if (temp) {
+			UE_LOG(LogTemp, Warning, TEXT("Cast successful"));
 			return temp->CurrentShip;
 		}
 	}

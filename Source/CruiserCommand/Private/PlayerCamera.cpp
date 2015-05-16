@@ -67,6 +67,7 @@ void APlayerCamera::ZoomOut() {
 
 /** Moves the camera forward or backward depending on the parameter and the value of EdgeForwardAxis */
 void APlayerCamera::CameraMove(float f, EAxis::Type axis) {
+	UE_LOG(LogTemp, Warning, TEXT("Foo"));
 	float AxisInput = EdgeForwardAxis;
 	if (axis == EAxis::Y) {
 		AxisInput = EdgeRightAxis;
@@ -77,5 +78,6 @@ void APlayerCamera::CameraMove(float f, EAxis::Type axis) {
 	
 	// Add the yaw vector multiplied by input and movement speed to the current location.
 	FVector newL = GetActorLocation() + FRotationMatrix(isolatedYaw).GetScaledAxis(axis) * MovementSpeed * (f + AxisInput);
+	UE_LOG(LogTemp, Warning, TEXT("New camera loc: %s"), *GetActorLocation().ToString());
 	SetActorLocation(newL);
 }

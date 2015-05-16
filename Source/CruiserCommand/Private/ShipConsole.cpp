@@ -34,7 +34,7 @@ AShipConsole::AShipConsole() {
 
 void AShipConsole::Tick(float DeltaTime){
 	//TArray<ACruiserCommandCharacter> characters;
-	
+
 }
 
 
@@ -42,10 +42,17 @@ void AShipConsole::Tick(float DeltaTime){
 void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
 	if (c) {
-		UE_LOG(LogTemp, Warning, TEXT("Entered console! %s"), *OtherActor->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
 		ACCPlayerController* PC = c->GetPlayerController();
+		UE_LOG(LogTemp, Warning, TEXT("Entered console! %s"), *OtherActor->GetName());
+
+		
 		if (PC) {
+			if (Role == ROLE_Authority) {
+				UE_LOG(LogTemp, Warning, TEXT("Authority!"));
+			} else {
+				UE_LOG(LogTemp, Warning, TEXT("No Authority!"));
+			}
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC: %s"), *PC->GetName());
 			UE_LOG(LogTemp, Warning, TEXT("PC: %s"), *PC->GetNetOwningPlayer()->GetName());
