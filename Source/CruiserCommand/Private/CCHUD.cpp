@@ -8,7 +8,6 @@
 
 ACCHUD::ACCHUD(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	CameraEdge = 50;
-
 	UE_LOG(LogTemp, Warning, TEXT("HUD Initialized"));
 }
 
@@ -44,8 +43,12 @@ void ACCHUD::DrawHUD() {
 	CreateCameraHitboxes();
 }
 
+void ACCHUD::ReceiveHitBoxClick(const FName BoxName) {
+	UE_LOG(LogTemp, Warning, TEXT("Click"));
+}
+
 /** So far, the only hitboxes on the hud are the edge boxes to scroll the camera. */
-/*void ACCHUD::ReceiveHitBoxBeginCursorOver(const FName BoxName) {
+void ACCHUD::NotifyHitBoxBeginCursorOver(const FName BoxName) {
 	if (!GEngine) {
 		return;
 	}
@@ -53,6 +56,7 @@ void ACCHUD::DrawHUD() {
 	if (player) {
 		APlayerCamera* cam = player->camera;
 		if (cam) {
+			UE_LOG(LogTemp, Warning, TEXT("In"));
 			if (BoxName.ToString() == "top") {
 				cam->EdgeForwardAxis = 1;
 			} else if (BoxName.ToString() == "bottom") {
@@ -74,11 +78,12 @@ void ACCHUD::DrawHUD() {
 				cam->EdgeForwardAxis = -1;
 				cam->EdgeRightAxis = 1;
 			}
+
 		}
 	}
 }
 
-void ACCHUD::ReceiveHitBoxEndCursorOver(const FName BoxName) {
+void ACCHUD::NotifyHitBoxEndCursorOver(const FName BoxName) {
 	if (!GEngine) {
 		return;
 	}
@@ -90,9 +95,10 @@ void ACCHUD::ReceiveHitBoxEndCursorOver(const FName BoxName) {
 		// Reset camera edge input
 		APlayerCamera* cam = player->camera;
 		if (cam) {
+			UE_LOG(LogTemp, Warning, TEXT("Out"));
 			cam->EdgeForwardAxis = 0;
 			cam->EdgeRightAxis = 0;
 		}
 	}
 
-}*/
+}

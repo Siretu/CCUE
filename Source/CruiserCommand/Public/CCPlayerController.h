@@ -29,7 +29,7 @@ public:
 	AAIController* Control;	// Controller of character. Only exists server-side
 
 	UPROPERTY(Replicated)
-	ACruiserCommandCharacter* AttachedPawn; // Pawned controlled by this character. Not possessed directly, but possessed by the AIController.
+	ACruiserCommandCharacter* AttachedPawn; // Pawn controlled by this character. Not possessed directly, but possessed by the AIController.
 
 	
 
@@ -45,6 +45,8 @@ public:
 	/** Called when you right click in the world to order the character to move */
 	void OrderMove();
 	
+	void PlayerCameraCancel();
+
 	/** Navigate player to the given world location (Server Version) */
 	UFUNCTION(Unreliable, Server, WithValidation)
 	void ServerSetNewMoveDestination(const FVector DestLocation);

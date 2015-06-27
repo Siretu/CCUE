@@ -32,6 +32,8 @@ public:
 	float EdgeForwardAxis;		// Current forward/backward movement from moving the camera to the edges.
 	float EdgeRightAxis;		// Current left/right movement from moving the camera to the edges.
 
+	void Tick(float DeltaTime);
+
 	/** Updates the camera relative location and rotation according to the current camera settings */
 	void UpdateLocRot();
 
@@ -43,5 +45,5 @@ public:
 	/** Zooms the camera out by increasing the camera radius */
 	void ZoomOut();
 	/** Moves the camera forward or backward depending on the parameter and the value of EdgeForwardAxis */
-	void CameraMove(float f, EAxis::Type);
+	void CameraMove();
 };

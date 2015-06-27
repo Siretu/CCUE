@@ -15,7 +15,6 @@ ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitial
 	this->bShowMouseCursor = true;
 	this->bAutoManageActiveCameraTarget = false;
 
-	UE_LOG(LogTemp, Warning, TEXT("Player constructor!"));
 	camera = NULL;
 	bControllingShip = false;
 	if (Role == ROLE_Authority)	{
@@ -43,8 +42,9 @@ void ACCPlayerController::BeginPlay() {
 		ACruiserCommandCharacter* Character = Cast<ACruiserCommandCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParams));
 		Character->SetPlayerController(this);
 		AttachedPawn = Character;
-		//Character->ParentProxy = this;
+
 		UE_LOG(LogTemp, Warning, TEXT("Linked: %s"), *this->GetName());
+
 		// We use the Control to control the Player Character for Navigation
 		Control = GetWorld()->SpawnActor<AAIController>(Location, Rotation);
 		Control->Possess(Character);
@@ -63,14 +63,15 @@ void ACCPlayerController::SetupInputComponent() {
 		//InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
 		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
 		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
+		InputComponent->BindAction("MoveCameraCancel", IE_Released, this, &ACCPlayerController::PlayerCameraCancel);
 	}
 }
 
 void ACCPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	if (Control && Control->GetPawn() && Cast<ACruiserCommandCharacter>(Control->GetPawn())->GetPlayerController() == NULL) {
+	/*if (Control && Control->GetPawn() && Cast<ACruiserCommandCharacter>(Control->GetPawn())->GetPlayerController() == NULL) {
 		Cast<ACruiserCommandCharacter>(Control->GetPawn())->SetPlayerController(this);
-	}
+	}*/
 
 	if (GetPawn()) {
 		PlayerCameraManager->SetViewTarget(GetPawn());
@@ -86,7 +87,8 @@ void ACCPlayerController::Tick(float DeltaTime) {
 /** Sets up the player camera. Spawns the camera class and sets the view target */
 void ACCPlayerController::SetupCamera() {
 	if (GetWorld()) {
-		camera = GetWorld()->SpawnActor<APlayerCamera>();
+		camera = Cast<APlayerCamera>(GetViewTarget());
+		//camera = GetWorld()->SpawnActor<APlayerCamera>();
 		if (camera) {
 			UE_LOG(LogTemp, Warning, TEXT("Created camera!"));
 			SetViewTarget(camera);
@@ -106,9 +108,7 @@ void ACCPlayerController::OrderMove(){
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
 		if (Cast<AShip>(Hit.GetActor())) {
 			if (GetCurrentShip()) {
-				FVector temp = Hit.ImpactPoint;
-				FVector neg = GetCurrentShip()->GetTransform().GetLocation();
-				temp -= neg;
+				FVector temp = Hit.ImpactPoint - GetCurrentShip()->GetTransform().GetLocation();
 				SetTargetPos(temp);
 				targetPos = temp;
 
@@ -132,11 +132,13 @@ void ACCPlayerController::OrderMove(){
 	}
 }
 
+
+
 /* Actual implementation of the ServerSetMoveDestination method */
 void ACCPlayerController::ServerSetNewMoveDestination_Implementation(const FVector DestLocation) {
 	float Distance = 0;
-	if (Control && Control->GetPawn()) {
-		Distance = FVector::Dist(DestLocation, Control->GetPawn()->GetActorLocation());
+	if (AttachedPawn) {
+		Distance = FVector::Dist(DestLocation, AttachedPawn->GetActorLocation());
 	}
 
 	// We need to issue move command only if far enough in order for walk animation to play correctly
@@ -166,17 +168,23 @@ void ACCPlayerController::PlayerZoomOut(){
 }
 
 void ACCPlayerController::PlayerCameraForward(float f){
-	UE_LOG(LogTemp, Warning, TEXT("Forward"));
-	if (camera) {
-		UE_LOG(LogTemp, Warning, TEXT("Forward inside"));
-		camera->CameraMove(f, EAxis::X);
+	if (camera && f) {
+		camera->EdgeForwardAxis = f;
 	}
 }
 void ACCPlayerController::PlayerCameraRight(float f){
-	if (camera) {
-		camera->CameraMove(f, EAxis::Y);
+	if (camera && f) {
+		camera->EdgeRightAxis = f;
 	}
 }
+
+void ACCPlayerController::PlayerCameraCancel(){
+	if (camera) {
+		camera->EdgeForwardAxis = 0;
+		camera->EdgeRightAxis = 0;
+	}
+}
+
 
 void ACCPlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

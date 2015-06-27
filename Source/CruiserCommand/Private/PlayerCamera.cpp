@@ -51,6 +51,12 @@ FVector APlayerCamera::PointOnSphere() {
 	return result;
 }
 
+void APlayerCamera::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	CameraMove();
+}
+
 /** Zooms the camera in by reducing the camera radius */
 void APlayerCamera::ZoomIn() {
 	// Make sure you don't zoom in too far
@@ -66,18 +72,14 @@ void APlayerCamera::ZoomOut() {
 }
 
 /** Moves the camera forward or backward depending on the parameter and the value of EdgeForwardAxis */
-void APlayerCamera::CameraMove(float f, EAxis::Type axis) {
-	UE_LOG(LogTemp, Warning, TEXT("Foo"));
-	float AxisInput = EdgeForwardAxis;
-	if (axis == EAxis::Y) {
-		AxisInput = EdgeRightAxis;
-	}
+void APlayerCamera::CameraMove() {
+
 	// Get just the camera yaw
 	FRotator worldRot = FollowCamera->GetComponentRotation();
 	FRotator isolatedYaw = FRotator(0, worldRot.Yaw, 0);
 	
 	// Add the yaw vector multiplied by input and movement speed to the current location.
-	FVector newL = GetActorLocation() + FRotationMatrix(isolatedYaw).GetScaledAxis(axis) * MovementSpeed * (f + AxisInput);
-	UE_LOG(LogTemp, Warning, TEXT("New camera loc: %s"), *GetActorLocation().ToString());
+	FVector newL = GetActorLocation() + FRotationMatrix(isolatedYaw).GetScaledAxis(EAxis::X) * MovementSpeed * EdgeForwardAxis;
+	newL = newL + FRotationMatrix(isolatedYaw).GetScaledAxis(EAxis::Y) * MovementSpeed * EdgeRightAxis;
 	SetActorLocation(newL);
 }
