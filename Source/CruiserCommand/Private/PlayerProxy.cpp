@@ -48,13 +48,13 @@ void APlayerProxy::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	if (Character && Character->CurrentShip) {
 		// Keep the Proxy in sync with the real character
-		FTransform CharTransform = Character->GetTransform();
+		/*FTransform CharTransform = Character->GetTransform();
 		FTransform MyTransform = GetTransform();
 
 		FTransform Transform;
 		Transform.LerpTranslationScale3D(CharTransform, MyTransform, ScalarRegister(0.5f));
 		Transform.SetRotation(Character->CurrentShip->GetTransform().GetRotation());
-
+		*/
 		//SetActorTransform(Transform);
 	}
 }

@@ -42,6 +42,7 @@ void ACCPlayerController::BeginPlay() {
 		// Spawn the actual player character at the location
 		ACruiserCommandCharacter* Character = Cast<ACruiserCommandCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParams));
 		Character->SetPlayerController(this);
+		AttachedPawn = Character;
 		//Character->ParentProxy = this;
 		UE_LOG(LogTemp, Warning, TEXT("Linked: %s"), *this->GetName());
 		// We use the Control to control the Player Character for Navigation
@@ -74,13 +75,12 @@ void ACCPlayerController::Tick(float DeltaTime) {
 	if (GetPawn()) {
 		PlayerCameraManager->SetViewTarget(GetPawn());
 	}
-	
-	FVector worldPos;
 
 	if (GetCurrentShip()) {
-		worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos;
+		FVector worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos;
+
+		ServerSetNewMoveDestination(worldPos);
 	}
-	ServerSetNewMoveDestination(worldPos);
 }
 
 /** Sets up the player camera. Spawns the camera class and sets the view target */
@@ -100,18 +100,20 @@ void ACCPlayerController::OrderMove(){
 	// Trace to check if mouse pointer if over a terrain
 	FHitResult Hit;
 	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
 	//Did it hit something?
 	if (Hit.bBlockingHit) {
 		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
 		if (Cast<AShip>(Hit.GetActor())) {
-			FVector temp = Hit.ImpactPoint - GetCurrentShip()->GetTransform().GetLocation();
-			SetTargetPos(temp);
-			targetPos = temp;
+			if (GetCurrentShip()) {
+				FVector temp = Hit.ImpactPoint;
+				FVector neg = GetCurrentShip()->GetTransform().GetLocation();
+				temp -= neg;
+				SetTargetPos(temp);
+				targetPos = temp;
 
-			UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
-
+				UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
+			}
 		} else if (bControllingShip == true) {
 			UE_LOG(LogTemp, Warning, TEXT("Rotating towards"));
 			AShip* ship = GetCurrentShip();
@@ -181,19 +183,12 @@ void ACCPlayerController::GetLifetimeReplicatedProps(TArray<class FLifetimePrope
 
 	// Replicate to Everyone
 	DOREPLIFETIME(ACCPlayerController, targetPos);
+	DOREPLIFETIME(ACCPlayerController, AttachedPawn);
 }
 
 AShip* ACCPlayerController::GetCurrentShip() {
-	APawn* p = GetPawn();
-	UE_LOG(LogTemp, Warning, TEXT("GetCurrentShip()"));
-	if (Control && Control->GetPawn()) { // Problem: Control is only defined server-side so we cant get the pawn.
-		UE_LOG(LogTemp, Warning, TEXT("Got control"));
-		ACruiserCommandCharacter* temp = Cast<ACruiserCommandCharacter>(Control->GetPawn());
-		UE_LOG(LogTemp, Warning, TEXT("Getting Pawn"));
-		if (temp) {
-			UE_LOG(LogTemp, Warning, TEXT("Cast successful"));
-			return temp->CurrentShip;
-		}
+	if (AttachedPawn) { 
+		return AttachedPawn->CurrentShip;
 	}
 	return NULL;
 }

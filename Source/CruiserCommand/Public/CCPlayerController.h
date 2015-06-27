@@ -6,6 +6,7 @@
 #include "UnrealNetwork.h"
 #include "Ship.h"
 #include "AIController.h"
+#include "CruiserCommandCharacter.h"
 #include "CCPlayerController.generated.h"
 
 /**
@@ -26,6 +27,9 @@ public:
 	TSubclassOf<AActor> CharacterClass;
 
 	AAIController* Control;	// Controller of character. Only exists server-side
+
+	UPROPERTY(Replicated)
+	ACruiserCommandCharacter* AttachedPawn; // Pawned controlled by this character. Not possessed directly, but possessed by the AIController.
 
 	
 

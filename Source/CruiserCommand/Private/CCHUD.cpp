@@ -45,7 +45,7 @@ void ACCHUD::DrawHUD() {
 }
 
 /** So far, the only hitboxes on the hud are the edge boxes to scroll the camera. */
-void ACCHUD::ReceiveHitBoxBeginCursorOver(const FName BoxName) {
+/*void ACCHUD::ReceiveHitBoxBeginCursorOver(const FName BoxName) {
 	if (!GEngine) {
 		return;
 	}
@@ -95,4 +95,4 @@ void ACCHUD::ReceiveHitBoxEndCursorOver(const FName BoxName) {
 		}
 	}
 
-}
+}*/

@@ -26,7 +26,7 @@ class CRUISERCOMMAND_API ACCHUD : public AHUD
 
 	virtual void DrawHUD() override;
 
-	virtual void ReceiveHitBoxBeginCursorOver(const FName BoxName) override;
-	virtual void ReceiveHitBoxEndCursorOver(const FName BoxName) override;
+	//virtual void ReceiveHitBoxBeginCursorOver(const FName BoxName) override;
+	//virtual void ReceiveHitBoxEndCursorOver(const FName BoxName) override;
 	
 };
