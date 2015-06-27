@@ -48,7 +48,7 @@ void ACCPlayerController::BeginPlay() {
 		// We use the Control to control the Player Character for Navigation
 		Control = GetWorld()->SpawnActor<AAIController>(Location, Rotation);
 		Control->Possess(Character);
-		targetPos = Location;
+		targetPos = FTransform(Location);
 	}
 	SetupCamera();
 }
@@ -77,9 +77,16 @@ void ACCPlayerController::Tick(float DeltaTime) {
 		PlayerCameraManager->SetViewTarget(GetPawn());
 	}
 
-	if (GetCurrentShip()) {
-		FVector worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos;
+	if (AttachedPawn && AttachedPawn->GetPlayerController() == NULL) {
+		AttachedPawn->SetPlayerController(this);
+	}
 
+	if (GetCurrentShip()) {
+		float newAngle = GetCurrentShip()->GetTransform().GetRotation().Rotator().Yaw - targetPos.GetRotation().Rotator().Yaw;
+		FVector worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos.GetLocation().RotateAngleAxis(newAngle, FVector(0, 0, 1));
+		
+		//worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos.GetLocation();
+		//UE_LOG(LogTemp, Warning, TEXT("Worldpos2: %s"), *worldPos.ToString());
 		ServerSetNewMoveDestination(worldPos);
 	}
 }
@@ -109,8 +116,10 @@ void ACCPlayerController::OrderMove(){
 		if (Cast<AShip>(Hit.GetActor())) {
 			if (GetCurrentShip()) {
 				FVector temp = Hit.ImpactPoint - GetCurrentShip()->GetTransform().GetLocation();
-				SetTargetPos(temp);
-				targetPos = temp;
+				FTransform a = FTransform(Hit.ImpactPoint);
+				a.SetRotation(GetCurrentShip()->GetTransform().GetRotation());
+				SetTargetPos(a);
+				targetPos = a;
 
 				UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
 			}
@@ -152,11 +161,12 @@ bool ACCPlayerController::ServerSetNewMoveDestination_Validate(const FVector Des
 	return true;
 }
 
-void ACCPlayerController::SetTargetPos_Implementation(FVector pos) {
+void ACCPlayerController::SetTargetPos_Implementation(FTransform pos) {
 	targetPos = pos;
+
 }
 
-bool ACCPlayerController::SetTargetPos_Validate(FVector pos) {
+bool ACCPlayerController::SetTargetPos_Validate(FTransform pos) {
 	return true;
 }
 

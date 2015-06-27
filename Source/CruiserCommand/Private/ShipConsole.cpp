@@ -41,6 +41,11 @@ void AShipConsole::Tick(float DeltaTime){
 // Runs when a character takes control of the console
 void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
+	if (Role == ROLE_Authority) {
+		UE_LOG(LogTemp, Warning, TEXT("Authority!"));
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("No Authority!"));
+	}
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
 		ACCPlayerController* PC = c->GetPlayerController();
@@ -48,11 +53,7 @@ void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCompon
 
 		
 		if (PC) {
-			if (Role == ROLE_Authority) {
-				UE_LOG(LogTemp, Warning, TEXT("Authority!"));
-			} else {
-				UE_LOG(LogTemp, Warning, TEXT("No Authority!"));
-			}
+
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC: %s"), *PC->GetName());
 			UE_LOG(LogTemp, Warning, TEXT("PC: %s"), *PC->GetNetOwningPlayer()->GetName());

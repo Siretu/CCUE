@@ -10,7 +10,7 @@ AShip::AShip() {
 	PrimaryActorTick.bCanEverTick = true;
 	bMovingForward = false;
 	TargetRotation = this->GetActorRotation();
-	RotationSpeed = 150;
+	RotationSpeed = 50;
 	MovementSpeed = 1000;
 }
 
@@ -39,7 +39,7 @@ void AShip::Tick(float delta) {
 		SetActorRotation(nextRot);
 		for (TActorIterator<ACruiserCommandCharacter> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID, maybe?
 			if (&(*ObstacleItr->CurrentShip) == this) {			// Only rotate if they're on this ship
-				(*ObstacleItr)->SetActorRotation((*ObstacleItr)->GetActorRotation() + (nextRot - oldRot));
+				//(*ObstacleItr)->SetActorRotation((*ObstacleItr)->GetActorRotation() + (nextRot - oldRot));
 			}
 		}
 	}

@@ -21,7 +21,7 @@ class CRUISERCOMMAND_API ACCPlayerController : public APlayerController
 
 public:
 	UPROPERTY(Replicated)
-	FVector targetPos;		// Local position on the ship to path towards.
+	FTransform targetPos;		// Local position on the ship to path towards.
 	class APlayerCamera* camera;
 
 	TSubclassOf<AActor> CharacterClass;
@@ -53,11 +53,11 @@ public:
 	virtual void ServerSetNewMoveDestination_Implementation(const FVector DestLocation);
 	virtual bool ServerSetNewMoveDestination_Validate(const FVector DestLocation);
 
-	/** Set marine target position */
+	/** Set marine target position. The Vector component is the local position of the order. The rotation was the ship's rotation at the time of the order. */
 	UFUNCTION(Reliable, Server, WithValidation)
-	void SetTargetPos(FVector pos);
-	virtual void SetTargetPos_Implementation(FVector pos);
-	virtual bool SetTargetPos_Validate(FVector pos);
+	void SetTargetPos(FTransform pos);
+	virtual void SetTargetPos_Implementation(FTransform pos);
+	virtual bool SetTargetPos_Validate(FTransform pos);
 
 	// Player camera functions. These exist because binding an axis input directly to the camera function seemed to fail.
 	void PlayerZoomIn();
