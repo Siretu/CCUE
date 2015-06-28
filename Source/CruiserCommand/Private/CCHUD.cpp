@@ -53,7 +53,9 @@ void ACCHUD::NotifyHitBoxBeginCursorOver(const FName BoxName) {
 		return;
 	}
 	ACCPlayerController* player = Cast<ACCPlayerController>(GEngine->GetGamePlayer(GetWorld(), 0)->PlayerController);
+	UE_LOG(LogTemp, Warning, TEXT("In"));
 	if (player) {
+		UE_LOG(LogTemp, Warning, TEXT("In"));
 		APlayerCamera* cam = player->camera;
 		if (cam) {
 			UE_LOG(LogTemp, Warning, TEXT("In"));

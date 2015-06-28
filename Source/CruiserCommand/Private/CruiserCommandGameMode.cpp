@@ -16,7 +16,22 @@ ACruiserCommandGameMode::ACruiserCommandGameMode(const FObjectInitializer& Objec
 
 	// Use our custom PlayerController class
 	PlayerControllerClass = ACCPlayerController::StaticClass();
-
+	incrementId = 0;
 	// Use our custom HUD class
 	HUDClass = ACCHUD::StaticClass();	
+}
+
+void ACruiserCommandGameMode::PostLogin(APlayerController* NewPlayer) {
+	Super::PostLogin(NewPlayer);
+	if (Role == ROLE_Authority)	{
+		UE_LOG(LogTemp, Warning, TEXT("POSTLOGIN AUTH"));
+	} else {
+		UE_LOG(LogTemp, Warning, TEXT("POSTLOGIN NO AUTH"));
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Gamemode postlogin"));
+
+	NewPlayer->PlayerState->PlayerId = incrementId;
+	incrementId++;
+
+	UE_LOG(LogTemp, Warning, TEXT("PlayerController Playerid%d"), NewPlayer->PlayerState->PlayerId);
 }

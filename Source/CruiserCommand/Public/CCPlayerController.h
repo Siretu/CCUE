@@ -36,6 +36,7 @@ public:
 	bool bControllingShip;
 
 	virtual void BeginPlay() override;
+	virtual void BeginPlayingState() override;
 	virtual void SetupInputComponent() override;
 	void Tick(float DeltaTime);
 

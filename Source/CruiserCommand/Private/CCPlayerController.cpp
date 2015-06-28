@@ -26,8 +26,31 @@ ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitial
 void ACCPlayerController::BeginPlay() {
 	Super::BeginPlay();
 	if (GetPawn()) {
+		UE_LOG(LogTemp, Warning, TEXT("Linked camera: %s"), *GetPawn()->GetName());
 		PlayerCameraManager->SetViewTarget(GetPawn());
 	}
+	UE_LOG(LogTemp, Warning, TEXT("State: %s"), *this->GetStateName().ToString());
+	
+
+	//SetupCamera();
+}
+
+void ACCPlayerController::SetupInputComponent() {
+	Super::SetupInputComponent();
+	if (InputComponent != NULL) {
+		UE_LOG(LogTemp, Warning, TEXT("InputComponent is not NULL!"));
+		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
+		//InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
+		//InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
+		//InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
+		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
+		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
+		InputComponent->BindAction("MoveCameraCancel", IE_Released, this, &ACCPlayerController::PlayerCameraCancel);
+	}
+}
+
+void ACCPlayerController::BeginPlayingState() {
+	Super::BeginPlayingState();
 	if (Role == ROLE_Authority)	{
 
 		FVector Location = FVector(0, 0, 96);
@@ -50,43 +73,19 @@ void ACCPlayerController::BeginPlay() {
 		Control->Possess(Character);
 		targetPos = FTransform(Location);
 	}
-	SetupCamera();
-}
+	PlayerCameraManager->SetViewTarget(GetPawn());
+	camera = Cast<APlayerCamera>(GetViewTarget());
 
-void ACCPlayerController::SetupInputComponent() {
-	Super::SetupInputComponent();
-	if (InputComponent != NULL) {
-		UE_LOG(LogTemp, Warning, TEXT("InputComponent is not NULL!"));
-		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
-		//InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
-		//InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
-		//InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
-		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
-		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
-		InputComponent->BindAction("MoveCameraCancel", IE_Released, this, &ACCPlayerController::PlayerCameraCancel);
-	}
+	AttachedPawn->SetPlayerController(this);
 }
 
 void ACCPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	/*if (Control && Control->GetPawn() && Cast<ACruiserCommandCharacter>(Control->GetPawn())->GetPlayerController() == NULL) {
-		Cast<ACruiserCommandCharacter>(Control->GetPawn())->SetPlayerController(this);
-	}*/
-
-	if (GetPawn()) {
-		PlayerCameraManager->SetViewTarget(GetPawn());
-	}
-
-	if (AttachedPawn && AttachedPawn->GetPlayerController() == NULL) {
-		AttachedPawn->SetPlayerController(this);
-	}
 
 	if (GetCurrentShip()) {
 		float newAngle = GetCurrentShip()->GetTransform().GetRotation().Rotator().Yaw - targetPos.GetRotation().Rotator().Yaw;
 		FVector worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos.GetLocation().RotateAngleAxis(newAngle, FVector(0, 0, 1));
 		
-		//worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos.GetLocation();
-		//UE_LOG(LogTemp, Warning, TEXT("Worldpos2: %s"), *worldPos.ToString());
 		ServerSetNewMoveDestination(worldPos);
 	}
 }
@@ -97,7 +96,11 @@ void ACCPlayerController::SetupCamera() {
 		camera = Cast<APlayerCamera>(GetViewTarget());
 		//camera = GetWorld()->SpawnActor<APlayerCamera>();
 		if (camera) {
-			UE_LOG(LogTemp, Warning, TEXT("Created camera!"));
+			if (Role == ROLE_Authority)	{
+				UE_LOG(LogTemp, Warning, TEXT("Created camera! auth"));
+			} else {
+				UE_LOG(LogTemp, Warning, TEXT("Created camera! no auth"));
+			}
 			SetViewTarget(camera);
 		}
 	}

@@ -10,6 +10,9 @@ class ACruiserCommandGameMode : public AGameMode
 
 public:
 	ACruiserCommandGameMode(const FObjectInitializer& ObjectInitializer);
+
+	int incrementId;
+	void PostLogin(APlayerController* p) override;
 };
 
 
