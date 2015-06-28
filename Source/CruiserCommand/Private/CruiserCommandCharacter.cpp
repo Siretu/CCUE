@@ -35,6 +35,9 @@ ACruiserCommandCharacter::ACruiserCommandCharacter() {
 
 void ACruiserCommandCharacter::BeginPlay() {
 	Super::BeginPlay();
+	Material = this->GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+	Material->SetVectorParameterValue(FName(TEXT("DiffuseColor")), FLinearColor(0.0f, 0.0f, 1.0f));
+	
 	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
 		UE_LOG(LogTemp, Warning, TEXT("Set ship"));
 		CurrentShip = *ObstacleItr;

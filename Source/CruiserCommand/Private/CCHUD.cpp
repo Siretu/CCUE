@@ -14,7 +14,7 @@ ACCHUD::ACCHUD(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitia
 /** Creates all the hitboxes for handling edge scrolling */
 void ACCHUD::CreateCameraHitboxes() {
 	// Should we draw the debug hitboxes on the screen? Serves no gameplay purposes. For debug only.
-	bool draw = true;
+	bool draw = false;
 
 	// Get screen resolution
 	const FVector2D ViewportSize = FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
@@ -53,12 +53,9 @@ void ACCHUD::NotifyHitBoxBeginCursorOver(const FName BoxName) {
 		return;
 	}
 	ACCPlayerController* player = Cast<ACCPlayerController>(GEngine->GetGamePlayer(GetWorld(), 0)->PlayerController);
-	UE_LOG(LogTemp, Warning, TEXT("In"));
 	if (player) {
-		UE_LOG(LogTemp, Warning, TEXT("In"));
 		APlayerCamera* cam = player->camera;
 		if (cam) {
-			UE_LOG(LogTemp, Warning, TEXT("In"));
 			if (BoxName.ToString() == "top") {
 				cam->EdgeForwardAxis = 1;
 			} else if (BoxName.ToString() == "bottom") {
@@ -97,7 +94,6 @@ void ACCHUD::NotifyHitBoxEndCursorOver(const FName BoxName) {
 		// Reset camera edge input
 		APlayerCamera* cam = player->camera;
 		if (cam) {
-			UE_LOG(LogTemp, Warning, TEXT("Out"));
 			cam->EdgeForwardAxis = 0;
 			cam->EdgeRightAxis = 0;
 		}

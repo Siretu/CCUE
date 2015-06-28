@@ -40,6 +40,7 @@ public:
 	bool bMovingForward;
 	float RotationSpeed;
 	float MovementSpeed;
+	float CurrentSpeed;
 	FVector EnterPosition; // When a character enters the ship, it will be transferred to this position. Not used yet.
 
 	// Getters & Setters

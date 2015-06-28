@@ -74,4 +74,15 @@ public:
 	void SetShipTargetRotation(AShip* s, FRotator newRot);
 	virtual bool SetShipTargetRotation_Validate(AShip* s, FRotator newRot);
 	virtual void SetShipTargetRotation_Implementation(AShip* s, FRotator newRot);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+		void Accelerate();
+	virtual bool Accelerate_Validate();
+	virtual void Accelerate_Implementation();
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void Decelerate();
+	virtual bool Decelerate_Validate();
+	virtual void Decelerate_Implementation();
+
 };

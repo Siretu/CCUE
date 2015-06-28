@@ -11,20 +11,22 @@ AShip::AShip() {
 	bMovingForward = false;
 	TargetRotation = this->GetActorRotation();
 	RotationSpeed = 50;
-	MovementSpeed = 1000;
+	MovementSpeed = 100;
+	CurrentSpeed = 0.0f;
 }
 
 void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 	// Set up gameplay key bindings. Currently none
 	check(InputComponent);
 
-	InputComponent->BindAction("ShipForward", IE_Pressed, this, &AShip::MoveForward);
-	InputComponent->BindAction("ShipForward", IE_Released, this, &AShip::StopMoveForward);
+	UE_LOG(LogTemp, Warning, TEXT("input components init"));
+	InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &AShip::MoveForward);
+	InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &AShip::StopMoveForward);
 }
 
 void AShip::Tick(float delta) {
-	if (bMovingForward) {
-		AddActorLocalOffset(FVector(MovementSpeed * delta, 0, 0));
+	if (CurrentSpeed > 0) {
+		AddActorLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0));
 		//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
 																// When moving navmeshes is a thing, this will probably not be needed anymore
 	}

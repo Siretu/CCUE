@@ -30,9 +30,6 @@ void ACCPlayerController::BeginPlay() {
 		PlayerCameraManager->SetViewTarget(GetPawn());
 	}
 	UE_LOG(LogTemp, Warning, TEXT("State: %s"), *this->GetStateName().ToString());
-	
-
-	//SetupCamera();
 }
 
 void ACCPlayerController::SetupInputComponent() {
@@ -40,12 +37,14 @@ void ACCPlayerController::SetupInputComponent() {
 	if (InputComponent != NULL) {
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent is not NULL!"));
 		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
-		//InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
-		//InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
+		InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
+		InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
 		//InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
 		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
 		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
 		InputComponent->BindAction("MoveCameraCancel", IE_Released, this, &ACCPlayerController::PlayerCameraCancel);
+		InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ACCPlayerController::Accelerate);
+		InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &ACCPlayerController::Decelerate);
 	}
 }
 
@@ -72,6 +71,13 @@ void ACCPlayerController::BeginPlayingState() {
 		Control = GetWorld()->SpawnActor<AAIController>(Location, Rotation);
 		Control->Possess(Character);
 		targetPos = FTransform(Location);
+	} else {
+		if (AttachedPawn == NULL) {
+			UE_LOG(LogTemp, Warning, TEXT("OH NO"));
+		} else {
+			AttachedPawn->Material->SetVectorParameterValue(FName(TEXT("DiffuseColor")), FLinearColor(0.0f, 1.0f, 0.0f));
+			UE_LOG(LogTemp, Warning, TEXT("OHHHH: %s"), *AttachedPawn->GetName());
+		}
 	}
 	PlayerCameraManager->SetViewTarget(GetPawn());
 	camera = Cast<APlayerCamera>(GetViewTarget());
@@ -116,10 +122,11 @@ void ACCPlayerController::OrderMove(){
 	if (Hit.bBlockingHit) {
 		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Ship Location: %s"), *GetCurrentShip()->GetTransform().GetLocation().ToString());
 		if (Cast<AShip>(Hit.GetActor())) {
 			if (GetCurrentShip()) {
 				FVector temp = Hit.ImpactPoint - GetCurrentShip()->GetTransform().GetLocation();
-				FTransform a = FTransform(Hit.ImpactPoint);
+				FTransform a = FTransform(temp);
 				a.SetRotation(GetCurrentShip()->GetTransform().GetRotation());
 				SetTargetPos(a);
 				targetPos = a;
@@ -223,4 +230,22 @@ void ACCPlayerController::SetShipTargetRotation_Implementation(AShip* ship, FRot
 
 bool ACCPlayerController::SetShipTargetRotation_Validate(AShip* ship, FRotator newRot) {
 	return true;
+}
+
+void ACCPlayerController::Accelerate_Implementation() {
+	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
+	GetCurrentShip()->CurrentSpeed += 1.0f;
+}
+
+bool ACCPlayerController::Accelerate_Validate() {
+	return bControllingShip;
+}
+
+void ACCPlayerController::Decelerate_Implementation() {
+	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
+	GetCurrentShip()->CurrentSpeed -= 1.0f;
+}
+
+bool ACCPlayerController::Decelerate_Validate() {
+	return bControllingShip;
 }

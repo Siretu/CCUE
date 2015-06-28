@@ -33,19 +33,12 @@ AShipConsole::AShipConsole() {
 }
 
 void AShipConsole::Tick(float DeltaTime){
-	//TArray<ACruiserCommandCharacter> characters;
-
 }
 
 
 // Runs when a character takes control of the console
 void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
-	if (Role == ROLE_Authority) {
-		UE_LOG(LogTemp, Warning, TEXT("Authority!"));
-	} else {
-		UE_LOG(LogTemp, Warning, TEXT("No Authority!"));
-	}
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
 		ACCPlayerController* PC = c->GetPlayerController();

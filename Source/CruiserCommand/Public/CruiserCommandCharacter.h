@@ -37,6 +37,7 @@ public:
 
 	/** Ship that this character is currently on */
 	AShip* CurrentShip;
+	UMaterialInstanceDynamic* Material;
 
 protected:
 	ACCPlayerController* PC;
@@ -45,9 +46,8 @@ protected:
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void TurnAtRate(float Rate);
-
-protected:
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	
 
 };
