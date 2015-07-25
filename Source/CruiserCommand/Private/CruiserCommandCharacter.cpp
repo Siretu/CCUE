@@ -33,6 +33,13 @@ ACruiserCommandCharacter::ACruiserCommandCharacter() {
 
 }
 
+void ACruiserCommandCharacter::PostInitializeComponents() {
+	Super::PostInitializeComponents();
+
+	HackMesh = GetMesh()->GetRelativeTransform();
+
+}
+
 void ACruiserCommandCharacter::BeginPlay() {
 	Super::BeginPlay();
 	Material = this->GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
@@ -46,6 +53,7 @@ void ACruiserCommandCharacter::BeginPlay() {
 
 void ACruiserCommandCharacter::Tick(float DeltaTime) {
 	//SetActorRotation(CurrentShip->GetTransform().GetRotation().Rotator());
+	GetMesh()->SetRelativeTransform(HackMesh);
 }
 
 ACCPlayerController* ACruiserCommandCharacter::GetPlayerController() {

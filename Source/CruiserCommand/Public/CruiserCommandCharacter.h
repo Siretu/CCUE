@@ -39,6 +39,10 @@ public:
 	AShip* CurrentShip;
 	UMaterialInstanceDynamic* Material;
 
+	virtual void PostInitializeComponents() override;
+
+	FTransform HackMesh;
+
 protected:
 	ACCPlayerController* PC;
 	/** 
