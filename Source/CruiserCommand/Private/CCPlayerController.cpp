@@ -64,7 +64,7 @@ void ACCPlayerController::BeginPlayingState() {
 		ACruiserCommandCharacter* Character = Cast<ACruiserCommandCharacter>(GetWorld()->SpawnActor(CharacterClass, &Location, &Rotation, SpawnParams));
 		Character->SetPlayerController(this);
 		AttachedPawn = Character;
-
+		
 		UE_LOG(LogTemp, Warning, TEXT("Linked: %s"), *this->GetName());
 
 		// We use the Control to control the Player Character for Navigation
@@ -81,7 +81,7 @@ void ACCPlayerController::BeginPlayingState() {
 	}
 	PlayerCameraManager->SetViewTarget(GetPawn());
 	camera = Cast<APlayerCamera>(GetViewTarget());
-
+	
 	AttachedPawn->SetPlayerController(this);
 }
 
@@ -89,6 +89,7 @@ void ACCPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (GetCurrentShip()) {
+		//AttachedPawn->AttachRootComponentToActor(GetCurrentShip());
 		float newAngle = GetCurrentShip()->GetTransform().GetRotation().Rotator().Yaw - targetPos.GetRotation().Rotator().Yaw;
 		FVector worldPos = GetCurrentShip()->GetTransform().GetLocation() + targetPos.GetLocation().RotateAngleAxis(newAngle, FVector(0, 0, 1));
 		
@@ -234,18 +235,22 @@ bool ACCPlayerController::SetShipTargetRotation_Validate(AShip* ship, FRotator n
 
 void ACCPlayerController::Accelerate_Implementation() {
 	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
-	GetCurrentShip()->CurrentSpeed += 1.0f;
+	if (bControllingShip) {
+		GetCurrentShip()->CurrentSpeed += 1.0f;
+	}
 }
 
 bool ACCPlayerController::Accelerate_Validate() {
-	return bControllingShip;
+	return true;
 }
 
 void ACCPlayerController::Decelerate_Implementation() {
 	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
-	GetCurrentShip()->CurrentSpeed -= 1.0f;
+	if (bControllingShip) {
+		GetCurrentShip()->CurrentSpeed -= 1.0f;
+	}
 }
 
 bool ACCPlayerController::Decelerate_Validate() {
-	return bControllingShip;
+	return true;
 }

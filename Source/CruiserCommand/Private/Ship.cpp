@@ -26,7 +26,9 @@ void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 
 void AShip::Tick(float delta) {
 	if (CurrentSpeed > 0) {
-		AddActorLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0));
+		if (Role == ROLE_Authority) {
+			AddActorLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0));
+		}
 		//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
 																// When moving navmeshes is a thing, this will probably not be needed anymore
 	}

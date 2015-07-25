@@ -53,6 +53,10 @@ void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCompon
 			PC->bControllingShip = true;
 		}
 	}
+	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
+		UE_LOG(LogTemp, Warning, TEXT("Set ship"));
+		this->AttachRootComponentToActor(*ObstacleItr);
+	}
 	
 }
 
