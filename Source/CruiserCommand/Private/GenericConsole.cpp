@@ -2,10 +2,10 @@
 
 #include "CruiserCommand.h"
 #include "CCPlayerController.h"
-#include "ShipConsole.h"
+#include "GenericConsole.h"
 
 
-AShipConsole::AShipConsole() {
+AGenericConsole::AGenericConsole() {
 	PrimaryActorTick.bCanEverTick = true;
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
@@ -26,18 +26,18 @@ AShipConsole::AShipConsole() {
 	ActivationCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("dummy"));
 	ActivationCapsule->AttachParent = RootComponent;
 	ActivationCapsule->SetRelativeScale3D(FVector(200, 200, 2));	
-	ActivationCapsule->OnComponentBeginOverlap.AddDynamic(this, &AShipConsole::EnterConsole);
-	ActivationCapsule->OnComponentEndOverlap.AddDynamic(this, &AShipConsole::ExitConsole);
+	ActivationCapsule->OnComponentBeginOverlap.AddDynamic(this, &AGenericConsole::EnterConsole);
+	ActivationCapsule->OnComponentEndOverlap.AddDynamic(this, &AGenericConsole::ExitConsole);
 	
 	
 }
 
-void AShipConsole::Tick(float DeltaTime){
+void AGenericConsole::Tick(float DeltaTime){
 }
 
 
 // Runs when a character takes control of the console
-void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
+void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
@@ -69,7 +69,7 @@ void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCompon
 }
 
 // Runs when a character leaves a console
-void AShipConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
+void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Left console! %s"), *OtherActor->GetName());

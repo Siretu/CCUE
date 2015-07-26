@@ -4,13 +4,13 @@
 
 #include "GameFramework/Actor.h"
 #include "CruiserCommandCharacter.h"
-#include "ShipConsole.generated.h"
+#include "GenericConsole.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CRUISERCOMMAND_API AShipConsole : public AActor
+class CRUISERCOMMAND_API AGenericConsole : public AActor
 {
 public:
 	GENERATED_BODY()
@@ -31,7 +31,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Components)
 	UStaticMeshComponent* Console;
 
-	AShipConsole();
+	AGenericConsole();
 
 	void Tick(float DeltaTime) override;
 
