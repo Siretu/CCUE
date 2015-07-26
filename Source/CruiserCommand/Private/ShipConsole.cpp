@@ -41,10 +41,18 @@ void AShipConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCompon
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
+
+		// Snap unit to beacon
+		FVector target = Beacon->GetComponentLocation();
+		FRotator PlayerRot = (Console->GetComponentLocation() - target).Rotation();
+		target.Z = c->GetActorLocation().Z;
+		c->SetActorLocation(target);
+		c->SetActorRotation(PlayerRot.Quaternion());
+
+		UE_LOG(LogTemp, Warning, TEXT("Moved to: %s"), *target.ToString());
 		ACCPlayerController* PC = c->GetPlayerController();
 		UE_LOG(LogTemp, Warning, TEXT("Entered console! %s"), *OtherActor->GetName());
 
-		
 		if (PC) {
 
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
