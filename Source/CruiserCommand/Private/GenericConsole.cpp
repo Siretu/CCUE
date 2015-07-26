@@ -42,7 +42,8 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
 
-		// Snap unit to beacon
+		// Snap unit to be
+		controllingPawn = c;
 		FVector target = Beacon->GetComponentLocation();
 		FRotator PlayerRot = (Console->GetComponentLocation() - target).Rotation();
 		target.Z = c->GetActorLocation().Z;
@@ -50,16 +51,6 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 		c->SetActorRotation(PlayerRot.Quaternion());
 
 		UE_LOG(LogTemp, Warning, TEXT("Moved to: %s"), *target.ToString());
-		ACCPlayerController* PC = c->GetPlayerController();
-		UE_LOG(LogTemp, Warning, TEXT("Entered console! %s"), *OtherActor->GetName());
-
-		if (PC) {
-
-			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
-			UE_LOG(LogTemp, Warning, TEXT("Casted PC: %s"), *PC->GetName());
-			UE_LOG(LogTemp, Warning, TEXT("PC: %s"), *PC->GetNetOwningPlayer()->GetName());
-			PC->bControllingShip = true;
-		}
 	}
 	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
 		UE_LOG(LogTemp, Warning, TEXT("Set ship"));
@@ -69,16 +60,5 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 }
 
 // Runs when a character leaves a console
-void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
-	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
-	if (c) {
-		UE_LOG(LogTemp, Warning, TEXT("Left console! %s"), *OtherActor->GetName());
-		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
-		ACCPlayerController* PC = c->GetPlayerController();
-		if (PC) {
-			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
-			PC->bControllingShip = false;
-		}
-	}
-}
+void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {}
 
