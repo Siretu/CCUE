@@ -12,7 +12,7 @@ void ANavigationConsole::EnterConsole(class AActor* OtherActor, class UPrimitive
 		ACCPlayerController* PC = controllingPawn->GetPlayerController();
 
 		if (PC) {
-			UE_LOG(LogTemp, Warning, TEXT("Casted PC"));
+			UE_LOG(LogTemp, Warning, TEXT("Casted foo PC"));
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC: %s"), *PC->GetName());
 			UE_LOG(LogTemp, Warning, TEXT("PC: %s"), *PC->GetNetOwningPlayer()->GetName());
 			PC->bControllingShip = true;

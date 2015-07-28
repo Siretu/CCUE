@@ -18,7 +18,6 @@ class ACruiserCommandCharacter : public ACharacter
 
 public:
 	ACruiserCommandCharacter();
-
 	
 	ACCPlayerController* GetPlayerController();
 	void SetPlayerController(ACCPlayerController* pc);

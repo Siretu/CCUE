@@ -48,6 +48,7 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 				UE_LOG(LogTemp, Warning, TEXT("Not auto managing"));
 			}
 			PC->Possess(this);
+			UE_LOG(LogTemp, Warning, TEXT("Possessing: %s"), *PC->GetName());
 			this->EnableInput(PC);
 			// Snap unit to be
 			controllingPawn = c;
@@ -68,4 +69,10 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 }
 
 // Runs when a character leaves a console
-void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {}
+void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
+	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
+
+	if (c) {
+		GetController()->UnPossess();
+	}
+}
