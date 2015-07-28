@@ -14,6 +14,7 @@ ACCPlayerController::ACCPlayerController(const FObjectInitializer& ObjectInitial
 	this->bEnableMouseOverEvents = true;
 	this->bShowMouseCursor = true;
 	this->bAutoManageActiveCameraTarget = false;
+	this->bFindCameraComponentWhenViewTarget = false;
 
 	camera = NULL;
 	bControllingShip = false;
@@ -36,14 +37,17 @@ void ACCPlayerController::SetupInputComponent() {
 	Super::SetupInputComponent();
 	if (InputComponent != NULL) {
 		UE_LOG(LogTemp, Warning, TEXT("InputComponent is not NULL!"));
-		InputComponent->BindAction("Order", IE_Pressed, this, &ACCPlayerController::OrderMove);
+		
+		FInputActionBinding binding = InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ACCPlayerController::OrderMove);
+		binding.bConsumeInput = false;
+	
 		InputComponent->BindAction("WheelMouseUp", IE_Pressed, this, &ACCPlayerController::PlayerZoomIn);
 		InputComponent->BindAction("WheelMouseDown", IE_Pressed, this, &ACCPlayerController::PlayerZoomOut);
 		//InputComponent->BindAction("ControlShip", IE_Pressed, this, &ACCPlayerController::ControlShip);
 		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
 		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
 		InputComponent->BindAction("MoveCameraCancel", IE_Released, this, &ACCPlayerController::PlayerCameraCancel);
-		InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ACCPlayerController::Accelerate);
+		//InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ACCPlayerController::Accelerate);
 		InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &ACCPlayerController::Decelerate);
 	}
 }
@@ -95,6 +99,9 @@ void ACCPlayerController::Tick(float DeltaTime) {
 		
 		ServerSetNewMoveDestination(worldPos);
 	}
+	if (GetViewTarget() != camera) {
+		SetViewTarget(camera); // TODO: This is stupid. Possessing a console (e.g in GenericConsole.cpp) changes view target and switching back right after doesn't seem to work.
+	}
 }
 
 /** Sets up the player camera. Spawns the camera class and sets the view target */
@@ -134,18 +141,18 @@ void ACCPlayerController::OrderMove(){
 
 				UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
 			}
-		} else if (bControllingShip == true) {
+			/*} else if (bControllingShip == true) {
 			UE_LOG(LogTemp, Warning, TEXT("Rotating towards"));
 			AShip* ship = GetCurrentShip();
 			if (ship != NULL) {
-				UE_LOG(LogTemp, Warning, TEXT("Got ship: %s"),*ship->GetName());
-				FRotator newRot = FRotationMatrix::MakeFromX(Hit.ImpactPoint - ship->GetActorLocation()).Rotator();
-				newRot.Roll = 0;
-				newRot.Pitch = 0;
-				
-				SetShipTargetRotation(ship, newRot);
-				UE_LOG(LogTemp, Warning, TEXT("Rotating aim: %f"), newRot.Yaw);
-			}
+			UE_LOG(LogTemp, Warning, TEXT("Got ship: %s"),*ship->GetName());
+			FRotator newRot = FRotationMatrix::MakeFromX(Hit.ImpactPoint - ship->GetActorLocation()).Rotator();
+			newRot.Roll = 0;
+			newRot.Pitch = 0;
+
+			//SetShipTargetRotation(ship, newRot);
+			UE_LOG(LogTemp, Warning, TEXT("Rotating aim: %f"), newRot.Yaw);
+			}*/
 		} else {
 			UE_LOG(LogTemp, Warning, TEXT("Doing nothing"));
 		}
@@ -220,17 +227,6 @@ AShip* ACCPlayerController::GetCurrentShip() {
 		return AttachedPawn->CurrentShip;
 	}
 	return NULL;
-}
-
-void ACCPlayerController::SetShipTargetRotation_Implementation(AShip* ship, FRotator newRot){
-	UE_LOG(LogTemp, Warning, TEXT("Set rotation to: %f"), newRot.Yaw);
-	if (ship != NULL) {
-		ship->TargetRotation = newRot;
-	}
-}
-
-bool ACCPlayerController::SetShipTargetRotation_Validate(AShip* ship, FRotator newRot) {
-	return true;
 }
 
 void ACCPlayerController::Accelerate_Implementation() {

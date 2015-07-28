@@ -68,13 +68,6 @@ public:
 
 	AShip* GetCurrentShip();
 
-
-	/** Sets the player's current ship's navigation. This should be in AShip, but RPCs don't seem to work when called from a different class. E.g: ship->SetTargetRotation doesn't work */
-	UFUNCTION(Reliable, Server, WithValidation)
-	void SetShipTargetRotation(AShip* s, FRotator newRot);
-	virtual bool SetShipTargetRotation_Validate(AShip* s, FRotator newRot);
-	virtual void SetShipTargetRotation_Implementation(AShip* s, FRotator newRot);
-
 	UFUNCTION(Reliable, Server, WithValidation)
 	void Accelerate();
 	virtual bool Accelerate_Validate();

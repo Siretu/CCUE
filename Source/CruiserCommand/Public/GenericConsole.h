@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class CRUISERCOMMAND_API AGenericConsole : public AActor
+class CRUISERCOMMAND_API AGenericConsole : public APawn
 {
 public:
 	GENERATED_BODY()
@@ -33,8 +33,6 @@ public:
 
 	AGenericConsole();
 
-	void Tick(float DeltaTime) override;
-
 	// Runs when a character takes control of the console
 	UFUNCTION()
 	virtual void EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -42,7 +40,6 @@ public:
 	// Runs when a character leaves a console
 	UFUNCTION()
 	virtual void ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 	
 	ACruiserCommandCharacter* controllingPawn;
 };

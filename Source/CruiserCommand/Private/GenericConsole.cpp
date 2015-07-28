@@ -3,6 +3,7 @@
 #include "CruiserCommand.h"
 #include "CCPlayerController.h"
 #include "GenericConsole.h"
+#include "PlayerCamera.h"
 
 
 AGenericConsole::AGenericConsole() {
@@ -32,25 +33,32 @@ AGenericConsole::AGenericConsole() {
 	
 }
 
-void AGenericConsole::Tick(float DeltaTime){
-}
-
-
 // Runs when a character takes control of the console
 void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
+	
 	if (c) {
 		UE_LOG(LogTemp, Warning, TEXT("Casted c"));
+		APlayerController* PC = c->GetPlayerController();
+		if (PC) {
+			UE_LOG(LogTemp, Warning, TEXT("Casted PC: Possessing"));
+			if (PC->bAutoManageActiveCameraTarget) {
+				UE_LOG(LogTemp, Warning, TEXT("Auto managing"));
+			} else {
+				UE_LOG(LogTemp, Warning, TEXT("Not auto managing"));
+			}
+			PC->Possess(this);
+			this->EnableInput(PC);
+			// Snap unit to be
+			controllingPawn = c;
+			FVector target = Beacon->GetComponentLocation();
+			FRotator PlayerRot = (Console->GetComponentLocation() - target).Rotation();
+			target.Z = c->GetActorLocation().Z;
+			c->SetActorLocation(target);
+			c->SetActorRotation(PlayerRot.Quaternion());
 
-		// Snap unit to be
-		controllingPawn = c;
-		FVector target = Beacon->GetComponentLocation();
-		FRotator PlayerRot = (Console->GetComponentLocation() - target).Rotation();
-		target.Z = c->GetActorLocation().Z;
-		c->SetActorLocation(target);
-		c->SetActorRotation(PlayerRot.Quaternion());
-
-		UE_LOG(LogTemp, Warning, TEXT("Moved to: %s"), *target.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("Moved to: %s"), *target.ToString());
+		}
 	}
 	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
 		UE_LOG(LogTemp, Warning, TEXT("Set ship"));
@@ -61,4 +69,3 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 
 // Runs when a character leaves a console
 void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {}
-
