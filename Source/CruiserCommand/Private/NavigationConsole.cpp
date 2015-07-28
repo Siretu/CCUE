@@ -37,7 +37,8 @@ void ANavigationConsole::SetupPlayerInputComponent(class UInputComponent* InputC
 	
 	check(InputComponent)
 	InputComponent->BindAction("Order", IE_Pressed, this, &ANavigationConsole::ShipOrder);
-
+	InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ANavigationConsole::Accelerate);
+	InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &ANavigationConsole::Decelerate);
 }
 
 /** Called when you right click in the world to order the character to move */
@@ -81,3 +82,26 @@ bool ANavigationConsole::SetShipTargetRotation_Validate(AShip* ship, FRotator ne
 	return true;
 }
 
+void ANavigationConsole::Accelerate_Implementation() {
+	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
+	ACCPlayerController* PC = Cast<ACCPlayerController>(GetController());
+	if (PC) {
+		PC->GetCurrentShip()->CurrentSpeed += 1.0f;
+	}
+}
+
+bool ANavigationConsole::Accelerate_Validate() {
+	return true;
+}
+
+void ANavigationConsole::Decelerate_Implementation() {
+	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
+	ACCPlayerController* PC = Cast<ACCPlayerController>(GetController());
+	if (PC) {
+		PC->GetCurrentShip()->CurrentSpeed -= 1.0f;
+	}
+}
+
+bool ANavigationConsole::Decelerate_Validate() {
+	return true;
+}

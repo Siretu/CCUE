@@ -46,8 +46,6 @@ void ACCPlayerController::SetupInputComponent() {
 		InputComponent->BindAxis("MoveCameraForward", this, &ACCPlayerController::PlayerCameraForward);
 		InputComponent->BindAxis("MoveCameraRight", this, &ACCPlayerController::PlayerCameraRight);
 		InputComponent->BindAction("MoveCameraCancel", IE_Released, this, &ACCPlayerController::PlayerCameraCancel);
-		//InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ACCPlayerController::Accelerate);
-		InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &ACCPlayerController::Decelerate);
 	}
 }
 
