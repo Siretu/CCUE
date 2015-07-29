@@ -5,18 +5,20 @@
 
 
 // Sets default values
-ATurret::ATurret(){}
+ATurret::ATurret(){
+	rotationRange = 160;
+}
 
 // Called when the game starts or when spawned
-void ATurret::BeginPlay()
-{
+void ATurret::BeginPlay() {
 	Super::BeginPlay();
 	
+	this->originalRotation = this->GetActorRotation().Yaw + 360;
+	UE_LOG(LogTemp, Warning, TEXT("Orig rotation: %f"), this->originalRotation);
 }
 
 // Called every frame
-void ATurret::Tick( float DeltaTime )
-{
+void ATurret::Tick( float DeltaTime ) {
 	Super::Tick( DeltaTime );
 
 }

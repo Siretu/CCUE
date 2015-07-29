@@ -24,14 +24,16 @@ ALaserTurret::ALaserTurret() {
 	Barrel->AttachParent = Base;
 }
 
-
 void ALaserTurret::FollowCursor(FVector cursorLocation) {
 	FVector direction = cursorLocation - GetActorLocation();
+	
 	FRotator Rot = FRotationMatrix::MakeFromX(direction).Rotator();
+	Rot.Yaw = FMath::ClampAngle(Rot.Yaw, originalRotation - rotationRange / 2, originalRotation + rotationRange / 2);
 	Rot.Pitch = 0;
 	Rot.Roll = 0;
 
-	this->SetActorRotation(Rot);
+	FRotator current = FMath::Lerp(GetActorRotation(), Rot, 0.1);
+	this->SetActorRotation(current);
 	UE_LOG(LogTemp, Warning, TEXT("Rotated turret"));
 }
 

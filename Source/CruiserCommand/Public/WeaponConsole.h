@@ -28,4 +28,6 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	TArray<ATurret*> GetAttachedTurrets();
+
+	TArray<ATurret*> GetAimedTurrets(FVector mouseLocation);
 };

@@ -49,8 +49,29 @@ TArray<ATurret*> AWeaponConsole::GetAttachedTurrets() {
 		ATurret* turret = Cast<ATurret>(actor);
 		if (turret) {
 			turrets.Add(turret);
-			UE_LOG(LogTemp, Warning, TEXT("Found turret"));
+			//UE_LOG(LogTemp, Warning, TEXT("Found turret"));
 		}
 	}
 	return turrets;
 }
+
+/** Get all turrets that can actually turn fully towards a given point.
+ *  This is e.g to exclude turrets on the other side of the ship.
+ */
+TArray<ATurret*> AWeaponConsole::GetAimedTurrets(FVector mouseLocation) {
+	TArray<ATurret*> turrets = GetAttachedTurrets();
+	TArray<ATurret*> result;
+
+	for (auto& turret : turrets) {
+		double target = (mouseLocation - turret->GetActorLocation()).Rotation().Yaw;
+		double clampedTarget = FMath::ClampAngle(target, turret->originalRotation - turret->rotationRange / 2, turret->originalRotation + turret->rotationRange / 2);
+		UE_LOG(LogTemp, Warning, TEXT("Target: %f"), target);
+		UE_LOG(LogTemp, Warning, TEXT("Clamped Target: %f"), clampedTarget);
+		if (FMath::Abs(target - clampedTarget) < 0.001) {
+			UE_LOG(LogTemp, Warning, TEXT("Found aimed turret"));
+			result.Add(turret);
+		}
+	}
+	return result;
+}
+
