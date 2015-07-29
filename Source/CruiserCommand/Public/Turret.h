@@ -24,5 +24,7 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	virtual void FollowCursor(FVector cursorLocation);
+
+	virtual void FireTurret(FVector target);
 	
 };

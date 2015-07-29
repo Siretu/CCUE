@@ -28,5 +28,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Components)
 	UStaticMeshComponent* Barrel;
 
+	UClass* ProjectileBP;
+
 	virtual void FollowCursor(FVector cursorLocation) override;
+
+	virtual void FireTurret(FVector target) override;
+
 };

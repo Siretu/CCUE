@@ -3,6 +3,7 @@
 #include "CruiserCommand.h"
 #include "WeaponConsole.h"
 #include "CCPlayerController.h"
+#include "Engine/Blueprint.h"
 
 // Called every frame
 void AWeaponConsole::Tick(float DeltaTime)
@@ -49,7 +50,6 @@ TArray<ATurret*> AWeaponConsole::GetAttachedTurrets() {
 		ATurret* turret = Cast<ATurret>(actor);
 		if (turret) {
 			turrets.Add(turret);
-			//UE_LOG(LogTemp, Warning, TEXT("Found turret"));
 		}
 	}
 	return turrets;
@@ -65,13 +65,33 @@ TArray<ATurret*> AWeaponConsole::GetAimedTurrets(FVector mouseLocation) {
 	for (auto& turret : turrets) {
 		double target = (mouseLocation - turret->GetActorLocation()).Rotation().Yaw;
 		double clampedTarget = FMath::ClampAngle(target, turret->originalRotation - turret->rotationRange / 2, turret->originalRotation + turret->rotationRange / 2);
-		UE_LOG(LogTemp, Warning, TEXT("Target: %f"), target);
-		UE_LOG(LogTemp, Warning, TEXT("Clamped Target: %f"), clampedTarget);
 		if (FMath::Abs(target - clampedTarget) < 0.001) {
-			UE_LOG(LogTemp, Warning, TEXT("Found aimed turret"));
 			result.Add(turret);
 		}
 	}
 	return result;
 }
 
+void AWeaponConsole::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
+	Super::SetupPlayerInputComponent(InputComponent);
+
+	check(InputComponent)
+	InputComponent->BindAction("Order", IE_Pressed, this, &AWeaponConsole::FireTurrets);
+}
+
+void AWeaponConsole::FireTurrets() {
+	
+	ACCPlayerController* PC = controllingPawn->GetPlayerController();
+	if (PC) {
+		FHitResult Hit;
+		PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+		if (Hit.bBlockingHit) {
+			TArray<ATurret*> turrets = GetAimedTurrets(Hit.ImpactPoint);
+
+			
+			for (auto& turret : turrets) {
+				turret->FireTurret(Hit.ImpactPoint);
+			}
+		}
+	}
+}

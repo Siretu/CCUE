@@ -22,6 +22,10 @@ ALaserTurret::ALaserTurret() {
 	Barrel->SetRelativeLocation(FVector(80, 0, 35));
 	Barrel->SetRelativeRotation(FRotator(0, 90, 0));
 	Barrel->AttachParent = Base;
+
+	static ConstructorHelpers::FObjectFinder<UClass> ProjectileBPClass(TEXT("/Game/Blueprints/ProjectilePrototype.ProjectilePrototype_C"));
+
+	ProjectileBP = ProjectileBPClass.Object;
 }
 
 void ALaserTurret::FollowCursor(FVector cursorLocation) {
@@ -34,6 +38,19 @@ void ALaserTurret::FollowCursor(FVector cursorLocation) {
 
 	FRotator current = FMath::Lerp(GetActorRotation(), Rot, 0.1);
 	this->SetActorRotation(current);
-	UE_LOG(LogTemp, Warning, TEXT("Rotated turret"));
+	//UE_LOG(LogTemp, Warning, TEXT("Rotated turret"));
 }
 
+void ALaserTurret::FireTurret(FVector target) {
+	FVector Location = GetActorLocation();
+	FRotator Rotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = Instigator;
+	SpawnParams.bNoCollisionFail = true;
+
+	// Spawn the actual player character at the location
+	GetWorld()->SpawnActor(ProjectileBP, &Location, &Rotation, SpawnParams);
+	UE_LOG(LogTemp, Warning, TEXT("Firing"));
+}

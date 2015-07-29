@@ -23,4 +23,6 @@ void ATurret::Tick( float DeltaTime ) {
 
 }
 
-void ATurret::FollowCursor(FVector cursorLocation){}
+void ATurret::FollowCursor(FVector cursorLocation){} 
+
+void ATurret::FireTurret(FVector target){}

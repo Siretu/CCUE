@@ -69,5 +69,6 @@ void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComp
 
 	if (c && GetController()) {
 		GetController()->UnPossess();
+		this->controllingPawn = NULL;
 	}
 }
