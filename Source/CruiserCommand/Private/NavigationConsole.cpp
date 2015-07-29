@@ -15,7 +15,6 @@ void ANavigationConsole::EnterConsole(class AActor* OtherActor, class UPrimitive
 			UE_LOG(LogTemp, Warning, TEXT("Casted foo PC"));
 			UE_LOG(LogTemp, Warning, TEXT("Casted PC: %s"), *PC->GetName());
 			UE_LOG(LogTemp, Warning, TEXT("PC: %s"), *PC->GetNetOwningPlayer()->GetName());
-			PC->bControllingShip = true;
 		}
 	}
 }
@@ -23,12 +22,6 @@ void ANavigationConsole::EnterConsole(class AActor* OtherActor, class UPrimitive
 // Runs when a character leaves a console
 void ANavigationConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
 	Super::ExitConsole(OtherActor, OtherComp, OtherBodyIndex);
-	if (controllingPawn && Cast<ACruiserCommandCharacter>(OtherActor)) {	// Check cast to not trigger for collisions with e.g ship
-		ACCPlayerController* PC = controllingPawn->GetPlayerController();
-		if (PC) {
-			PC->bControllingShip = false;
-		}
-	}
 }
 
 void ANavigationConsole::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
@@ -44,11 +37,12 @@ void ANavigationConsole::SetupPlayerInputComponent(class UInputComponent* InputC
 /** Called when you right click in the world to order the character to move */
 void ANavigationConsole::ShipOrder(){
 	UE_LOG(LogTemp, Warning, TEXT("Ordering move!"));
-	// Trace to check if mouse pointer if over a terrain
-	FHitResult Hit;
 	
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController) {
+		// Trace to check if mouse pointer if over a terrain
+		FHitResult Hit;
+
 		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 		//Did it hit something?
 		if (Hit.bBlockingHit) {

@@ -49,8 +49,8 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 			}
 			PC->Possess(this);
 			UE_LOG(LogTemp, Warning, TEXT("Possessing: %s"), *PC->GetName());
-			this->EnableInput(PC);
-			// Snap unit to be
+
+			// Snap unit to beacon
 			controllingPawn = c;
 			FVector target = Beacon->GetComponentLocation();
 			FRotator PlayerRot = (Console->GetComponentLocation() - target).Rotation();
@@ -60,19 +60,14 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 
 			UE_LOG(LogTemp, Warning, TEXT("Moved to: %s"), *target.ToString());
 		}
-	}
-	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
-		UE_LOG(LogTemp, Warning, TEXT("Set ship"));
-		this->AttachRootComponentToActor(*ObstacleItr);
-	}
-	
+	}	
 }
 
 // Runs when a character leaves a console
 void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) {
 	ACruiserCommandCharacter* c = Cast<ACruiserCommandCharacter>(OtherActor);
 
-	if (c) {
+	if (c && GetController()) {
 		GetController()->UnPossess();
 	}
 }
