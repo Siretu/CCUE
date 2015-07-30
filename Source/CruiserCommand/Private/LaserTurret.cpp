@@ -44,6 +44,7 @@ void ALaserTurret::FollowCursor(FVector cursorLocation) {
 void ALaserTurret::FireTurret(FVector target) {
 	FVector Location = GetActorLocation();
 	FRotator Rotation = GetActorRotation();
+	Rotation.Yaw -= 90;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;

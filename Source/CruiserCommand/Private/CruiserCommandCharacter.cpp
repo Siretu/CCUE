@@ -44,15 +44,21 @@ void ACruiserCommandCharacter::BeginPlay() {
 	Material = this->GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
 	Material->SetVectorParameterValue(FName(TEXT("DiffuseColor")), FLinearColor(0.0f, 0.0f, 1.0f));
 	
+	double distance = -1;
 	for (TActorIterator<AShip> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID
 		UE_LOG(LogTemp, Warning, TEXT("Set ship"));
-		CurrentShip = *ObstacleItr;
+		float newDistance = (*ObstacleItr)->GetDistanceTo(this);
+		if (newDistance < distance || distance == -1) {
+			CurrentShip = *ObstacleItr;
+			distance = newDistance;
+		}
 	}
 }
 
 void ACruiserCommandCharacter::Tick(float DeltaTime) {
 	//SetActorRotation(CurrentShip->GetTransform().GetRotation().Rotator());
 	GetMesh()->SetRelativeTransform(HackMesh);
+	//AddActorLocalOffset(FVector(100 * DeltaTime, 0, 0), true);
 }
 
 ACCPlayerController* ACruiserCommandCharacter::GetPlayerController() {

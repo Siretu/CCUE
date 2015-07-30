@@ -54,6 +54,11 @@ public:
 	UPROPERTY(Replicated)
 	FRotator TargetRotation;
 
+	UBoxComponent* ActivationBox;
+
+	UFUNCTION()
+	virtual void EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
 protected:
 
 };
