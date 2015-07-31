@@ -15,6 +15,7 @@ ALaserTurret::ALaserTurret() {
 	Base->SetStaticMesh(StaticMesh_Sphere.Object);
 	Base->SetRelativeLocation(FVector(0, 0, -50));
 	Base->AttachParent = RootComponent;
+	Base->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("barrel"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Pipe(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe.Shape_Pipe'"));
@@ -22,6 +23,7 @@ ALaserTurret::ALaserTurret() {
 	Barrel->SetRelativeLocation(FVector(80, 0, 35));
 	Barrel->SetRelativeRotation(FRotator(0, 90, 0));
 	Barrel->AttachParent = Base;
+	Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	static ConstructorHelpers::FObjectFinder<UClass> ProjectileBPClass(TEXT("/Game/Blueprints/ProjectilePrototype.ProjectilePrototype_C"));
 

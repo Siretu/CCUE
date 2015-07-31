@@ -63,13 +63,13 @@ void AShip::Tick(float delta) {
 			TArray<UActorComponent*> foo = GetComponents();
 			for (auto& comp : foo) {
 				USceneComponent* sceneComp = Cast<USceneComponent>(comp);
-				FHitResult* hits;
+				//FHitResult* hits;
 				/*if (sceneComp->AddLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0), true, hits) == false) {
 
 				}*/
 				UE_LOG(LogTemp, Warning, TEXT("Sweeping: %s"), *sceneComp->GetName());
 			}
-			//AddActorLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0), true);
+			AddActorLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0), true);
 
 			
 		}
