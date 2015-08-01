@@ -132,16 +132,15 @@ void ACCPlayerController::OrderMove(){
 		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Location: %s"), *Hit.ImpactPoint.ToString());
 		//UE_LOG(LogTemp, Warning, TEXT("Ship Location: %s"), *GetCurrentShip()->GetTransform().GetLocation().ToString());
-		if (Cast<AShip>(Hit.GetActor())) {
-			if (GetCurrentShip()) {
-				FVector temp = Hit.ImpactPoint - GetCurrentShip()->GetTransform().GetLocation();
-				FTransform a = FTransform(temp);
-				a.SetRotation(GetCurrentShip()->GetTransform().GetRotation());
-				SetTargetPos(a);
-				targetPos = a;
+		AShip* Ship = Cast<AShip>(Hit.GetActor());
+		if (Ship != NULL && Ship == GetCurrentShip()) {
+			FVector temp = Hit.ImpactPoint - GetCurrentShip()->GetTransform().GetLocation();
+			FTransform a = FTransform(temp);
+			a.SetRotation(GetCurrentShip()->GetTransform().GetRotation());
+			SetTargetPos(a);
+			targetPos = a;
 
-				UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
-			}
+			UE_LOG(LogTemp, Warning, TEXT("Set targetPos: %s"), *targetPos.ToString());
 			/*} else if (bControllingShip == true) {
 			UE_LOG(LogTemp, Warning, TEXT("Rotating towards"));
 			AShip* ship = GetCurrentShip();

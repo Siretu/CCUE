@@ -12,7 +12,7 @@ AProjectile::AProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	UProjectileMovementComponent* projectile = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("projectile"));
-	projectile->InitialSpeed = 100;
+	projectile->InitialSpeed = 350;
 	projectile->ProjectileGravityScale = 0;
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("root"));
