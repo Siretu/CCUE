@@ -19,6 +19,7 @@ AShip::AShip() {
 	RotationSpeed = 50;
 	MovementSpeed = 100;
 	CurrentSpeed = 0.0f;
+	ReregisterAllComponents();
 
 //	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 //	RootComponent = Root;
@@ -38,7 +39,7 @@ void AShip::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* Ot
 void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 	// Set up gameplay key bindings. Currently none
 	check(InputComponent);
-
+	
 	UE_LOG(LogTemp, Warning, TEXT("input components init"));
 	InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &AShip::MoveForward);
 	InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &AShip::StopMoveForward);
@@ -46,12 +47,11 @@ void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 
 void AShip::Tick(float delta) {
 	UWorld *w = GetWorld();
-	TArray<FHitResult> hits;
-	if (CurrentSpeed > 0) {
+	if (CurrentSpeed != 0) {
 		if (Role == ROLE_Authority) {
 			FVector move = FVector(CurrentSpeed * MovementSpeed * delta, 0, 0);
-			AddActorLocalOffset(move, true);
-				
+			FHitResult* hit = new FHitResult();
+			AddActorLocalOffset(move, true, hit);
 		}
 		//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
 																// When moving navmeshes is a thing, this will probably not be needed anymore
@@ -61,15 +61,11 @@ void AShip::Tick(float delta) {
 	if (Role == ROLE_Authority)	{
 		//UE_LOG(LogTemp, Warning, TEXT("Rotation speed: %f"), TargetRotation.Yaw);
 	}
-	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.001) {
+	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.01) {
 		UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
 		FRotator oldRot = GetActorRotation();
+		//SetActorRelativeRotation(nextRot, true);
 		SetActorRotation(nextRot);
-		for (TActorIterator<ACruiserCommandCharacter> ObstacleItr(GetWorld()); ObstacleItr; ++ObstacleItr) { // TODO: VERY STUPID, maybe?
-			if (&(*ObstacleItr->CurrentShip) == this) {			// Only rotate if they're on this ship
-				//(*ObstacleItr)->SetActorRotation((*ObstacleItr)->GetActorRotation() + (nextRot - oldRot));
-			}
-		}
 	}
 }
 

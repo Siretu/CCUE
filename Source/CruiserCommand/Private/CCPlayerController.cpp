@@ -126,7 +126,7 @@ void ACCPlayerController::OrderMove(){
 	UE_LOG(LogTemp, Warning, TEXT("Ordering move!"));
 	// Trace to check if mouse pointer if over a terrain
 	FHitResult Hit;
-	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	GetHitResultUnderCursor(ECC_Visibility, true, Hit);
 	//Did it hit something?
 	if (Hit.bBlockingHit) {
 		UE_LOG(LogTemp, Warning, TEXT("Hit actor: %s"), *Hit.GetActor()->GetName());

@@ -41,6 +41,7 @@ public:
 	float RotationSpeed;
 	float MovementSpeed;
 	float CurrentSpeed;
+	bool bBlocked;
 	FVector EnterPosition; // When a character enters the ship, it will be transferred to this position. Not used yet.
 
 	// Getters & Setters

@@ -16,6 +16,7 @@ AGenericConsole::AGenericConsole() {
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Sphere(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
 	Beacon->SetStaticMesh(StaticMesh_Sphere.Object);
 	Beacon->AttachParent = RootComponent;
+	Beacon->SetCollisionResponseToChannel(ECollisionChannel::ECC_Vehicle, ECollisionResponse::ECR_Ignore);
 
 	Console = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("console"));
 	Console->SetRelativeScale3D(FVector(1, 0.8, 1));
@@ -23,6 +24,7 @@ AGenericConsole::AGenericConsole() {
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Console(TEXT("StaticMesh'/Game/Models/SM_Console.SM_Console'"));
 	Console->SetStaticMesh(StaticMesh_Console.Object);
 	Console->AttachParent = RootComponent;
+	Console->SetCollisionResponseToChannel(ECollisionChannel::ECC_Vehicle, ECollisionResponse::ECR_Ignore);
 
 	ActivationCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("dummy"));
 	ActivationCapsule->AttachParent = RootComponent;
