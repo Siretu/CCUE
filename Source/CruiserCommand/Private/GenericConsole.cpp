@@ -72,3 +72,12 @@ void AGenericConsole::ExitConsole(class AActor* OtherActor, class UPrimitiveComp
 		this->controllingPawn = NULL;
 	}
 }
+
+void AGenericConsole::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
+	Super::SetupPlayerInputComponent(InputComponent);
+
+	check(InputComponent)
+		InputComponent->BindAction("Order", IE_Pressed, this, &AGenericConsole::ConsoleOrder);
+}
+
+void AGenericConsole::ConsoleOrder() {}

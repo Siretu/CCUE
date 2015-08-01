@@ -40,6 +40,10 @@ public:
 	// Runs when a character leaves a console
 	UFUNCTION()
 	virtual void ExitConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+	virtual void ConsoleOrder();
 	
 	ACruiserCommandCharacter* controllingPawn;
 };

@@ -45,33 +45,13 @@ void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 }
 
 void AShip::Tick(float delta) {
+	UWorld *w = GetWorld();
+	TArray<FHitResult> hits;
 	if (CurrentSpeed > 0) {
 		if (Role == ROLE_Authority) {
-			FVector CurrentLocation = GetActorLocation();
-			CurrentLocation.X += CurrentSpeed * MovementSpeed * delta;
-			//FHitResult* HitResult;
-			//SetActorLocation(CurrentLocation, true, &HitResult);
-			/*if (SetActorLocation(CurrentLocation, true, &HitResult) == false)
-			{
-				// If the set function returned false something is blocking at that location. We can interrogate this result to determine details of this  
-				// @See FHitResult for more information  
-				if (HitResult.GetActor() != nullptr)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Cannot move object to location, blocked by"));
-				}
-			}*/
-			TArray<UActorComponent*> foo = GetComponents();
-			for (auto& comp : foo) {
-				USceneComponent* sceneComp = Cast<USceneComponent>(comp);
-				//FHitResult* hits;
-				/*if (sceneComp->AddLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0), true, hits) == false) {
-
-				}*/
-				UE_LOG(LogTemp, Warning, TEXT("Sweeping: %s"), *sceneComp->GetName());
-			}
-			AddActorLocalOffset(FVector(CurrentSpeed * MovementSpeed * delta, 0, 0), true);
-
-			
+			FVector move = FVector(CurrentSpeed * MovementSpeed * delta, 0, 0);
+			AddActorLocalOffset(move, true);
+				
 		}
 		//		GetWorld()->GetNavigationSystem()->Build();		// This is probably pretty bad. For some reason the navmesh doesn't rebuild until you stop moving forward. 
 																// When moving navmeshes is a thing, this will probably not be needed anymore

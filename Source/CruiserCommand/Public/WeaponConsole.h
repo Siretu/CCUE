@@ -27,9 +27,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void ConsoleOrder() override;
 
-	virtual void FireTurrets();
+	void FireTurrets();
 	
 	TArray<ATurret*> GetAttachedTurrets();
 

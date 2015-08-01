@@ -16,6 +16,7 @@ ALaserTurret::ALaserTurret() {
 	Base->SetRelativeLocation(FVector(0, 0, -50));
 	Base->AttachParent = RootComponent;
 	Base->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Base->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
 	Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("barrel"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Pipe(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe.Shape_Pipe'"));
@@ -24,6 +25,7 @@ ALaserTurret::ALaserTurret() {
 	Barrel->SetRelativeRotation(FRotator(0, 90, 0));
 	Barrel->AttachParent = Base;
 	Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Barrel->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
 	static ConstructorHelpers::FObjectFinder<UClass> ProjectileBPClass(TEXT("/Game/Blueprints/ProjectilePrototype.ProjectilePrototype_C"));
 
@@ -44,7 +46,7 @@ void ALaserTurret::FollowCursor(FVector cursorLocation) {
 }
 
 void ALaserTurret::FireTurret(FVector target) {
-	FVector Location = GetActorLocation();
+	FVector Location = Barrel->GetComponentLocation();
 	FRotator Rotation = GetActorRotation();
 	Rotation.Yaw -= 90;
 

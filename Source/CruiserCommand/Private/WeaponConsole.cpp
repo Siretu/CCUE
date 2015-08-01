@@ -72,11 +72,8 @@ TArray<ATurret*> AWeaponConsole::GetAimedTurrets(FVector mouseLocation) {
 	return result;
 }
 
-void AWeaponConsole::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
-	Super::SetupPlayerInputComponent(InputComponent);
-
-	check(InputComponent)
-	InputComponent->BindAction("Order", IE_Pressed, this, &AWeaponConsole::FireTurrets);
+void AWeaponConsole::ConsoleOrder() {
+	FireTurrets();
 }
 
 void AWeaponConsole::FireTurrets() {
