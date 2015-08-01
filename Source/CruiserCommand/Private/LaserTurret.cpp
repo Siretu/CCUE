@@ -27,7 +27,7 @@ ALaserTurret::ALaserTurret() {
 	Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Barrel->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 
-	static ConstructorHelpers::FObjectFinder<UClass> ProjectileBPClass(TEXT("/Game/Blueprints/ProjectilePrototype.ProjectilePrototype_C"));
+	static ConstructorHelpers::FObjectFinder<UClass> ProjectileBPClass(TEXT("Class'/Script/CruiserCommand.Projectile'"));
 
 	ProjectileBP = ProjectileBPClass.Object;
 }
@@ -48,7 +48,7 @@ void ALaserTurret::FollowCursor(FVector cursorLocation) {
 void ALaserTurret::FireTurret(FVector target) {
 	FVector Location = Barrel->GetComponentLocation();
 	FRotator Rotation = GetActorRotation();
-	Rotation.Yaw -= 90;
+	//Rotation.Yaw -= 90;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;

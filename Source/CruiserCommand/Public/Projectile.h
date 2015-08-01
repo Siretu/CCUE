@@ -20,6 +20,12 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	
+	UBoxComponent* CollisionBox;
+	UStaticMeshComponent* Mesh;
+	USoundCue* CollisionSound;
+	UParticleSystem* CollisionEffect;
+
+	UFUNCTION()
+	virtual void OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 };
