@@ -27,4 +27,5 @@ public:
 
 	virtual void FireTurret(FVector target);
 	
+	double ClampTurretAngle(double angle);
 };

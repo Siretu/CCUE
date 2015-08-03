@@ -14,6 +14,8 @@ void ATurret::BeginPlay() {
 	Super::BeginPlay();
 	
 	this->originalRotation = this->GetActorRotation().Yaw + 360;
+	double parentRotation = GetAttachParentActor()->GetActorRotation().Yaw;
+	this->originalRotation -= parentRotation;
 	UE_LOG(LogTemp, Warning, TEXT("Orig rotation: %f"), this->originalRotation);
 }
 
@@ -26,3 +28,8 @@ void ATurret::Tick( float DeltaTime ) {
 void ATurret::FollowCursor(FVector cursorLocation){} 
 
 void ATurret::FireTurret(FVector target){}
+
+double ATurret::ClampTurretAngle(double angle){
+	double orig = originalRotation + GetAttachParentActor()->GetActorRotation().Yaw;
+	return (double) FMath::ClampAngle(angle, orig - rotationRange / 2, orig + rotationRange / 2);
+}

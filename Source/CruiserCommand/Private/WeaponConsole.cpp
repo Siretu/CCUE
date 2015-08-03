@@ -64,7 +64,7 @@ TArray<ATurret*> AWeaponConsole::GetAimedTurrets(FVector mouseLocation) {
 
 	for (auto& turret : turrets) {
 		double target = (mouseLocation - turret->GetActorLocation()).Rotation().Yaw;
-		double clampedTarget = FMath::ClampAngle(target, turret->originalRotation - turret->rotationRange / 2, turret->originalRotation + turret->rotationRange / 2);
+		double clampedTarget = turret->ClampTurretAngle(target);
 		if (FMath::Abs(target - clampedTarget) < 0.001) {
 			result.Add(turret);
 		}
@@ -85,7 +85,6 @@ void AWeaponConsole::FireTurrets() {
 		if (Hit.bBlockingHit) {
 			TArray<ATurret*> turrets = GetAimedTurrets(Hit.ImpactPoint);
 
-			
 			for (auto& turret : turrets) {
 				turret->FireTurret(Hit.ImpactPoint);
 			}
