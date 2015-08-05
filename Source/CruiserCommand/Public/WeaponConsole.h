@@ -34,4 +34,13 @@ public:
 	TArray<ATurret*> GetAttachedTurrets();
 
 	TArray<ATurret*> GetAimedTurrets(FVector mouseLocation);
+
+	UFUNCTION(Reliable, Server, WithValidation)
+	void SetTargetRotation(FRotator newRot);
+	virtual bool SetTargetRotation_Validate(FRotator newRot);
+	virtual void SetTargetRotation_Implementation(FRotator newRot);
+
+	UPROPERTY(Replicated)
+	FRotator TargetRotation;
+
 };

@@ -19,7 +19,6 @@ AShip::AShip() {
 	RotationSpeed = 50;
 	MovementSpeed = 100;
 	CurrentSpeed = 0.0f;
-	ReregisterAllComponents();
 
 //	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 //	RootComponent = Root;
@@ -49,6 +48,7 @@ void AShip::Tick(float delta) {
 	UWorld *w = GetWorld();
 	if (CurrentSpeed != 0) {
 		if (Role == ROLE_Authority) {
+			UE_LOG(LogTemp, Warning, TEXT("On Server"));
 			FVector move = FVector(CurrentSpeed * MovementSpeed * delta, 0, 0);
 			FHitResult* hit = new FHitResult();
 			AddActorLocalOffset(move, true, hit);
@@ -57,6 +57,7 @@ void AShip::Tick(float delta) {
 																// When moving navmeshes is a thing, this will probably not be needed anymore
 	}
 	//FQuat nextRot = FQuat::Slerp(TargetRotation, GetActorQuat(), delta);
+	
 	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), TargetRotation, delta, RotationSpeed);
 	if (Role == ROLE_Authority)	{
 		//UE_LOG(LogTemp, Warning, TEXT("Rotation speed: %f"), TargetRotation.Yaw);
@@ -114,6 +115,7 @@ bool AShip::SetTargetRotation_Validate(FRotator newRot) {
 void AShip::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	UE_LOG(LogTemp, Warning, TEXT("Foo"));
 	// Replicate to Everyone
 	DOREPLIFETIME(AShip, TargetRotation);
 	DOREPLIFETIME(AShip, bMovingForward);

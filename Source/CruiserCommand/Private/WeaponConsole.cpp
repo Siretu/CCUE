@@ -3,6 +3,7 @@
 #include "CruiserCommand.h"
 #include "WeaponConsole.h"
 #include "CCPlayerController.h"
+#include "UnrealNetwork.h"
 #include "Engine/Blueprint.h"
 
 // Called every frame
@@ -18,12 +19,17 @@ void AWeaponConsole::Tick(float DeltaTime)
 
 			PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 			if (Hit.bBlockingHit) {
-				TArray<ATurret*> turrets = GetAttachedTurrets();
-
-				for (auto& turret : turrets) {
-					turret->FollowCursor(Hit.ImpactPoint);
-				}
+				//Rotation.Yaw -= 90;
+				FVector direction = Hit.ImpactPoint - GetActorLocation();
+				FRotator Rot = FRotationMatrix::MakeFromX(direction).Rotator();
+				SetTargetRotation(Rot);
 			}
+		}
+		TArray<ATurret*> turrets = GetAttachedTurrets();
+		
+		for (auto& turret : turrets) {
+			UE_LOG(LogTemp, Warning, TEXT("Aiming"));
+			turret->FollowCursor(TargetRotation, DeltaTime);
 		}
 	}
 }
@@ -90,4 +96,21 @@ void AWeaponConsole::FireTurrets() {
 			}
 		}
 	}
+}
+
+void AWeaponConsole::SetTargetRotation_Implementation(FRotator newRot){
+	//UE_LOG(LogTemp, Warning, TEXT("Set rotation to: %f"), newRot);
+	TargetRotation = newRot;
+}
+
+bool AWeaponConsole::SetTargetRotation_Validate(FRotator newRot) {
+	UE_LOG(LogTemp, Warning, TEXT("Validate"));
+	return true;
+}
+
+void AWeaponConsole::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate to Everyone
+	DOREPLIFETIME(AWeaponConsole, TargetRotation);
 }

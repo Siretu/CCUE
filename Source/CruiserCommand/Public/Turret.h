@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Turret.generated.h"
 
+
 UCLASS()
 class CRUISERCOMMAND_API ATurret : public AActor
 {
@@ -14,6 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	ATurret();
 
+
+	double RotationSpeed;
 	double originalRotation;
 	double rotationRange;
 
@@ -23,9 +26,10 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	virtual void FollowCursor(FVector cursorLocation);
+	virtual void FollowCursor(FRotator target, float delta);
 
 	virtual void FireTurret(FVector target);
 	
 	double ClampTurretAngle(double angle);
+
 };

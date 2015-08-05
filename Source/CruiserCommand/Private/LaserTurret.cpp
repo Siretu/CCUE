@@ -9,6 +9,7 @@ ALaserTurret::ALaserTurret() {
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 	RootComponent = Root;
+	Root->SetIsReplicated(true);
 
 	Base = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("base"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Sphere(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
@@ -32,22 +33,20 @@ ALaserTurret::ALaserTurret() {
 	ProjectileBP = ProjectileBPClass.Object;
 }
 
-void ALaserTurret::FollowCursor(FVector cursorLocation) {
-	FVector direction = cursorLocation - GetActorLocation();
-	FRotator Rot = FRotationMatrix::MakeFromX(direction).Rotator();
-	Rot.Yaw = ClampTurretAngle(Rot.Yaw);
-	Rot.Pitch = 0;
-	Rot.Roll = 0;
+void ALaserTurret::FollowCursor(FRotator target, float delta) {
 
-	FRotator current = FMath::Lerp(GetActorRotation(), Rot, 0.1);
-	this->SetActorRotation(current);
-	//UE_LOG(LogTemp, Warning, TEXT("Rotated turret"));
+	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), target, delta, RotationSpeed);
+	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.01) {
+		UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
+		target.Yaw = ClampTurretAngle(target.Yaw);
+		SetActorRotation(target);
+	}
+
 }
 
 void ALaserTurret::FireTurret(FVector target) {
 	FVector Location = Barrel->GetComponentLocation();
 	FRotator Rotation = GetActorRotation();
-	//Rotation.Yaw -= 90;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
@@ -56,5 +55,6 @@ void ALaserTurret::FireTurret(FVector target) {
 
 	// Spawn the actual player character at the location
 	GetWorld()->SpawnActor(ProjectileBP, &Location, &Rotation, SpawnParams);
+	//UE_LOG(LogTemp, Warning, TEXT("Rotated turret"));
 	UE_LOG(LogTemp, Warning, TEXT("Firing"));
 }

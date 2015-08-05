@@ -2,11 +2,14 @@
 
 #include "CruiserCommand.h"
 #include "Turret.h"
-
+#include "UnrealNetwork.h"
 
 // Sets default values
 ATurret::ATurret(){
 	rotationRange = 160;
+	RotationSpeed = 50;
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -16,6 +19,7 @@ void ATurret::BeginPlay() {
 	this->originalRotation = this->GetActorRotation().Yaw + 360;
 	double parentRotation = GetAttachParentActor()->GetActorRotation().Yaw;
 	this->originalRotation -= parentRotation;
+	//this->TargetRotation = FRotator(0,originalRotation,0);
 	UE_LOG(LogTemp, Warning, TEXT("Orig rotation: %f"), this->originalRotation);
 }
 
@@ -23,9 +27,15 @@ void ATurret::BeginPlay() {
 void ATurret::Tick( float DeltaTime ) {
 	Super::Tick( DeltaTime );
 
+	//UE_LOG(LogTemp, Warning, TEXT("Target Rotation: %f"), TargetRotation);
+
+	//UE_LOG(LogTemp, Warning, TEXT("Delta: %f"), abs(GetTransform().GetRotation().Rotator().Yaw - nextRot));
+	if (Role == ROLE_Authority)	{
+		//UE_LOG(LogTemp, Warning, TEXT("Rotation speed: %f"), TargetRotation.Yaw);
+	}
 }
 
-void ATurret::FollowCursor(FVector cursorLocation){} 
+void ATurret::FollowCursor(FRotator target, float delta){} 
 
 void ATurret::FireTurret(FVector target){}
 
