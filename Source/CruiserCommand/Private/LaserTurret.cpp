@@ -37,9 +37,8 @@ void ALaserTurret::FollowCursor(FRotator target, float delta) {
 
 	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), target, delta, RotationSpeed);
 	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.01) {
-		UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
-		target.Yaw = ClampTurretAngle(target.Yaw);
-		SetActorRotation(target);
+		//UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
+		SetActorRotation(FRotator(0, ClampTurretAngle(target.Yaw), 0));
 	}
 
 }
@@ -47,6 +46,8 @@ void ALaserTurret::FollowCursor(FRotator target, float delta) {
 void ALaserTurret::FireTurret(FVector target) {
 	FVector Location = Barrel->GetComponentLocation();
 	FRotator Rotation = GetActorRotation();
+	Rotation.Roll = 0;
+	Rotation.Pitch = 0;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;

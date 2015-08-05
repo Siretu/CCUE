@@ -14,6 +14,7 @@ AProjectile::AProjectile()
 	UProjectileMovementComponent* projectile = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("projectile"));
 	projectile->InitialSpeed = 350;
 	projectile->ProjectileGravityScale = 0;
+	projectile->Velocity = FVector(1, 0, 0);
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("root"));
 	CollisionBox->SetRelativeScale3D(FVector(0.7, 1, 0.7));
@@ -22,6 +23,7 @@ AProjectile::AProjectile()
 	CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Destructible, ECollisionResponse::ECR_Overlap);
 	CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_Destructible);
 	CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	CollisionBox->SetConstraintMode(EDOFMode::XYPlane);
 	RootComponent = CollisionBox;
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Pipe(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe.Shape_Pipe'"));
@@ -55,7 +57,7 @@ void AProjectile::Tick( float DeltaTime )
 }
 
 void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {
-	UE_LOG(LogTemp, Warning, TEXT("Projectile hit"));
+	UE_LOG(LogTemp, Warning, TEXT("Projectile hit: %s"), *OtherActor->GetName());
 	
 	//PlaySoundOnActor(CollisionSound);
 	UGameplayStatics::PlaySoundAttached(CollisionSound, this->GetRootComponent());

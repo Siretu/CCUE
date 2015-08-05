@@ -28,7 +28,6 @@ void AWeaponConsole::Tick(float DeltaTime)
 		TArray<ATurret*> turrets = GetAttachedTurrets();
 		
 		for (auto& turret : turrets) {
-			UE_LOG(LogTemp, Warning, TEXT("Aiming"));
 			turret->FollowCursor(TargetRotation, DeltaTime);
 		}
 	}
@@ -104,7 +103,6 @@ void AWeaponConsole::SetTargetRotation_Implementation(FRotator newRot){
 }
 
 bool AWeaponConsole::SetTargetRotation_Validate(FRotator newRot) {
-	UE_LOG(LogTemp, Warning, TEXT("Validate"));
 	return true;
 }
 
