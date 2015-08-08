@@ -27,17 +27,17 @@ public:
 	void ShipOrder();
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void SetShipTargetRotation(AShip* s, FRotator newRot);
-	virtual bool SetShipTargetRotation_Validate(AShip* s, FRotator newRot);
-	virtual void SetShipTargetRotation_Implementation(AShip* s, FRotator newRot);
+	void ServerSetShipTargetRotation(AShip* s, FRotator newRot);
+	virtual bool ServerSetShipTargetRotation_Validate(AShip* s, FRotator newRot);
+	virtual void ServerSetShipTargetRotation_Implementation(AShip* s, FRotator newRot);
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void Accelerate();
-	virtual bool Accelerate_Validate();
-	virtual void Accelerate_Implementation();
+	void ServerAccelerate();
+	virtual bool ServerAccelerate_Validate();
+	virtual void ServerAccelerate_Implementation();
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void Decelerate();
-	virtual bool Decelerate_Validate();
-	virtual void Decelerate_Implementation();
+	void ServerDecelerate();
+	virtual bool ServerDecelerate_Validate();
+	virtual void ServerDecelerate_Implementation();
 };

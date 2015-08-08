@@ -30,8 +30,8 @@ void ANavigationConsole::SetupPlayerInputComponent(class UInputComponent* InputC
 	
 	check(InputComponent)
 	InputComponent->BindAction("Order", IE_Pressed, this, &ANavigationConsole::ShipOrder);
-	InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ANavigationConsole::Accelerate);
-	InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &ANavigationConsole::Decelerate);
+	InputComponent->BindAction("ShipAccelerate", IE_Pressed, this, &ANavigationConsole::ServerAccelerate);
+	InputComponent->BindAction("ShipDecelerate", IE_Pressed, this, &ANavigationConsole::ServerDecelerate);
 }
 
 /** Called when you right click in the world to order the character to move */
@@ -58,25 +58,25 @@ void ANavigationConsole::ShipOrder(){
 					newRot.Roll = 0;
 					newRot.Pitch = 0;
 
-					SetShipTargetRotation(ship, newRot);
+					ServerSetShipTargetRotation(ship, newRot);
 				}
 			}
 		}
 	}
 }
 
-void ANavigationConsole::SetShipTargetRotation_Implementation(AShip* ship, FRotator newRot){
+void ANavigationConsole::ServerSetShipTargetRotation_Implementation(AShip* ship, FRotator newRot){
 	UE_LOG(LogTemp, Warning, TEXT("Set rotation to: %f"), newRot.Yaw);
 	if (ship != NULL) {
 		ship->TargetRotation = newRot;
 	}
 }
 
-bool ANavigationConsole::SetShipTargetRotation_Validate(AShip* ship, FRotator newRot) {
+bool ANavigationConsole::ServerSetShipTargetRotation_Validate(AShip* ship, FRotator newRot) {
 	return true;
 }
 
-void ANavigationConsole::Accelerate_Implementation() {
+void ANavigationConsole::ServerAccelerate_Implementation() {
 	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
 	ACCPlayerController* PC = Cast<ACCPlayerController>(GetController());
 	if (PC) {
@@ -84,11 +84,11 @@ void ANavigationConsole::Accelerate_Implementation() {
 	}
 }
 
-bool ANavigationConsole::Accelerate_Validate() {
+bool ANavigationConsole::ServerAccelerate_Validate() {
 	return true;
 }
 
-void ANavigationConsole::Decelerate_Implementation() {
+void ANavigationConsole::ServerDecelerate_Implementation() {
 	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
 	ACCPlayerController* PC = Cast<ACCPlayerController>(GetController());
 	if (PC) {
@@ -96,6 +96,6 @@ void ANavigationConsole::Decelerate_Implementation() {
 	}
 }
 
-bool ANavigationConsole::Decelerate_Validate() {
+bool ANavigationConsole::ServerDecelerate_Validate() {
 	return true;
 }
