@@ -228,25 +228,3 @@ AShip* ACCPlayerController::GetCurrentShip() {
 	}
 	return NULL;
 }
-
-void ACCPlayerController::Accelerate_Implementation() {
-	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
-	if (bControllingShip) {
-		GetCurrentShip()->CurrentSpeed += 1.0f;
-	}
-}
-
-bool ACCPlayerController::Accelerate_Validate() {
-	return true;
-}
-
-void ACCPlayerController::Decelerate_Implementation() {
-	UE_LOG(LogTemp, Warning, TEXT("Moving forward"));
-	if (bControllingShip) {
-		GetCurrentShip()->CurrentSpeed -= 1.0f;
-	}
-}
-
-bool ACCPlayerController::Decelerate_Validate() {
-	return true;
-}

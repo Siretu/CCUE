@@ -23,21 +23,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	virtual void Tick(float delta) override;
 
-	UFUNCTION(Reliable, Server, WithValidation)
-	void MoveForward();
-	virtual bool MoveForward_Validate();
-	virtual void MoveForward_Implementation();
-	
-	UFUNCTION(Reliable, Server, WithValidation)
-	void StopMoveForward();
-	virtual bool StopMoveForward_Validate();
-	virtual void StopMoveForward_Implementation();
-
 	void EnterShip(ACruiserCommandCharacter* character);
 
 	// Variables
 	UPROPERTY(Replicated)
-	bool bMovingForward;
 	float RotationSpeed;
 	float MovementSpeed;
 	float CurrentSpeed;

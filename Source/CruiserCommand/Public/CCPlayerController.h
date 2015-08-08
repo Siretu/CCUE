@@ -67,15 +67,4 @@ public:
 	void PlayerCameraRight(float f);
 
 	AShip* GetCurrentShip();
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void Accelerate();
-	virtual bool Accelerate_Validate();
-	virtual void Accelerate_Implementation();
-
-	UFUNCTION(Reliable, Server, WithValidation)
-	void Decelerate();
-	virtual bool Decelerate_Validate();
-	virtual void Decelerate_Implementation();
-
 };
