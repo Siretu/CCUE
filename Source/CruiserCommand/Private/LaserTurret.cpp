@@ -38,7 +38,7 @@ void ALaserTurret::FollowCursor(FRotator target, float delta) {
 	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), target, delta, RotationSpeed);
 	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.01) {
 		//UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
-		SetActorRotation(FRotator(0, ClampTurretAngle(target.Yaw), 0));
+		SetActorRotation(FRotator(0, ClampTurretAngle(nextRot.Yaw), 0));
 	}
 
 }
