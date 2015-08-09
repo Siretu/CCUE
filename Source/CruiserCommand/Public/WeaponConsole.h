@@ -30,18 +30,18 @@ public:
 	virtual void ConsoleOrder() override;
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void FireTurrets(FVector mousePoint);
-	virtual void FireTurrets_Implementation(FVector mousePoint);
-	virtual	bool FireTurrets_Validate(FVector mousePoint);
+	void ServerFireTurrets(FVector mousePoint);
+	virtual void ServerFireTurrets_Implementation(FVector mousePoint);
+	virtual	bool ServerFireTurrets_Validate(FVector mousePoint);
 	
 	TArray<ATurret*> GetAttachedTurrets();
 
 	TArray<ATurret*> GetAimedTurrets(FVector mouseLocation);
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void SetTargetRotation(FRotator newRot);
-	virtual void SetTargetRotation_Implementation(FRotator newRot);
-	virtual bool SetTargetRotation_Validate(FRotator newRot);
+	void ServerSetTargetRotation(FRotator newRot);
+	virtual void ServerSetTargetRotation_Implementation(FRotator newRot);
+	virtual bool ServerSetTargetRotation_Validate(FRotator newRot);
 
 	UPROPERTY(Replicated)
 	FRotator TargetRotation;

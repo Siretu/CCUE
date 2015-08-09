@@ -22,7 +22,7 @@ void AWeaponConsole::Tick(float DeltaTime)
 				//Rotation.Yaw -= 90;
 				FVector direction = Hit.ImpactPoint - GetActorLocation();
 				FRotator Rot = FRotationMatrix::MakeFromX(direction).Rotator();
-				SetTargetRotation(Rot);
+				ServerSetTargetRotation(Rot);
 			}
 		}
 		TArray<ATurret*> turrets = GetAttachedTurrets();
@@ -86,12 +86,12 @@ void AWeaponConsole::ConsoleOrder() {
 		PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 		if (Hit.bBlockingHit) {
 			UE_LOG(LogTemp, Warning, TEXT("ConsoleOrder()"));
-			FireTurrets(Hit.ImpactPoint);
+			ServerFireTurrets(Hit.ImpactPoint);
 		}
 	}
 }
 
-void AWeaponConsole::FireTurrets_Implementation(FVector mousePoint) {	
+void AWeaponConsole::ServerFireTurrets_Implementation(FVector mousePoint) {	
 	TArray<ATurret*> turrets = GetAimedTurrets(mousePoint);
 	
 	for (auto& turret : turrets) {
@@ -99,16 +99,16 @@ void AWeaponConsole::FireTurrets_Implementation(FVector mousePoint) {
 	}
 }
 
-bool AWeaponConsole::FireTurrets_Validate(FVector mousePoint) {
+bool AWeaponConsole::ServerFireTurrets_Validate(FVector mousePoint) {
 	return true;
 }
 
-void AWeaponConsole::SetTargetRotation_Implementation(FRotator newRot){
+void AWeaponConsole::ServerSetTargetRotation_Implementation(FRotator newRot){
 	//UE_LOG(LogTemp, Warning, TEXT("Set foo to: %f"), newRot);
 	TargetRotation = newRot;
 }
 
-bool AWeaponConsole::SetTargetRotation_Validate(FRotator newRot) {
+bool AWeaponConsole::ServerSetTargetRotation_Validate(FRotator newRot) {
 	return true;
 }
 
