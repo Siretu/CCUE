@@ -53,6 +53,7 @@ void ACruiserCommandCharacter::BeginPlay() {
 			distance = newDistance;
 		}
 	}
+	//this->AttachRootComponentToActor(CurrentShip);
 }
 
 void ACruiserCommandCharacter::Tick(float DeltaTime) {

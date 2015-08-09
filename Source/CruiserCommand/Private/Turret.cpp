@@ -37,7 +37,10 @@ void ATurret::Tick( float DeltaTime ) {
 
 void ATurret::FollowCursor(FRotator target, float delta){} 
 
-void ATurret::FireTurret(FVector target){}
+
+void ATurret::FireTurret(FVector target){
+	UE_LOG(LogTemp, Warning, TEXT("Virtual implementations"));
+}
 
 double ATurret::ClampTurretAngle(double angle){
 	double orig = originalRotation + GetAttachParentActor()->GetActorRotation().Yaw;

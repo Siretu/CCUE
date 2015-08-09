@@ -33,5 +33,4 @@ public:
 	virtual void FollowCursor(FRotator target, float delta) override;
 
 	virtual void FireTurret(FVector target) override;
-
 };

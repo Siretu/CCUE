@@ -78,27 +78,33 @@ TArray<ATurret*> AWeaponConsole::GetAimedTurrets(FVector mouseLocation) {
 }
 
 void AWeaponConsole::ConsoleOrder() {
-	FireTurrets();
-}
-
-void AWeaponConsole::FireTurrets() {
-	
+	UE_LOG(LogTemp, Warning, TEXT("ConsoleOrder()"));
 	ACCPlayerController* PC = controllingPawn->GetPlayerController();
 	if (PC) {
+		UE_LOG(LogTemp, Warning, TEXT("ConsoleOrder()"));
 		FHitResult Hit;
 		PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 		if (Hit.bBlockingHit) {
-			TArray<ATurret*> turrets = GetAimedTurrets(Hit.ImpactPoint);
-
-			for (auto& turret : turrets) {
-				turret->FireTurret(Hit.ImpactPoint);
-			}
+			UE_LOG(LogTemp, Warning, TEXT("ConsoleOrder()"));
+			FireTurrets(Hit.ImpactPoint);
 		}
 	}
 }
 
+void AWeaponConsole::FireTurrets_Implementation(FVector mousePoint) {	
+	TArray<ATurret*> turrets = GetAimedTurrets(mousePoint);
+	
+	for (auto& turret : turrets) {
+		turret->FireTurret(mousePoint);
+	}
+}
+
+bool AWeaponConsole::FireTurrets_Validate(FVector mousePoint) {
+	return true;
+}
+
 void AWeaponConsole::SetTargetRotation_Implementation(FRotator newRot){
-	//UE_LOG(LogTemp, Warning, TEXT("Set rotation to: %f"), newRot);
+	//UE_LOG(LogTemp, Warning, TEXT("Set foo to: %f"), newRot);
 	TargetRotation = newRot;
 }
 

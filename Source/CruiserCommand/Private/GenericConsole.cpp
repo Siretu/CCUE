@@ -8,6 +8,7 @@
 
 AGenericConsole::AGenericConsole() {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 	RootComponent = Root;
@@ -50,7 +51,13 @@ void AGenericConsole::EnterConsole(class AActor* OtherActor, class UPrimitiveCom
 				UE_LOG(LogTemp, Warning, TEXT("Not auto managing"));
 			}
 			PC->Possess(this);
+			if (Role == ROLE_Authority)	{
+				this->SetOwner(PC);
+				UE_LOG(LogTemp, Warning, TEXT("Setting owner"));
+			}
 			UE_LOG(LogTemp, Warning, TEXT("Possessing: %s"), *PC->GetName());
+
+
 
 			// Snap unit to beacon
 			controllingPawn = c;

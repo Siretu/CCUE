@@ -11,6 +11,11 @@ AProjectile::AProjectile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Replication
+	SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
+	bReplicates = true;
+	bReplicateMovement = true;
+
 	UProjectileMovementComponent* projectile = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("projectile"));
 	projectile->InitialSpeed = 350;
 	projectile->ProjectileGravityScale = 0;
