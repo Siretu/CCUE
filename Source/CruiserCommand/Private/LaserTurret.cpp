@@ -33,12 +33,13 @@ ALaserTurret::ALaserTurret() {
 	ProjectileBP = ProjectileBPClass.Object;
 }
 
-void ALaserTurret::FollowCursor(FRotator target, float delta) {
-
-	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), target, delta, RotationSpeed);
-	if (abs(GetTransform().GetRotation().Rotator().Yaw - nextRot.Yaw) > 0.01) {
-		//UE_LOG(LogTemp, Warning, TEXT("Rotating towards: %f"), nextRot.Yaw);
-		SetActorRotation(FRotator(0, ClampTurretAngle(nextRot.Yaw), 0));
+void ALaserTurret::FollowCursor(FVector target, float delta) {
+	FVector direction = target - GetActorLocation();
+	FRotator Rot = FRotationMatrix::MakeFromX(direction).Rotator();
+	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), Rot, delta, RotationSpeed);
+	double clampedAngle = ClampTurretAngle(nextRot.Yaw);
+	if (abs(GetTransform().GetRotation().Rotator().Yaw - clampedAngle) > 0.01) {
+		SetActorRotation(FRotator(0, clampedAngle, 0));
 	}
 
 }

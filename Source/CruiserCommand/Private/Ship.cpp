@@ -42,7 +42,6 @@ void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 }
 
 void AShip::Tick(float delta) {
-	UWorld *w = GetWorld();
 	if (CurrentSpeed != 0) {
 		if (Role == ROLE_Authority) {
 			UE_LOG(LogTemp, Warning, TEXT("On Server"));

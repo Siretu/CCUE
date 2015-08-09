@@ -39,11 +39,11 @@ public:
 	TArray<ATurret*> GetAimedTurrets(FVector mouseLocation);
 
 	UFUNCTION(Reliable, Server, WithValidation)
-	void ServerSetTargetRotation(FRotator newRot);
-	virtual void ServerSetTargetRotation_Implementation(FRotator newRot);
-	virtual bool ServerSetTargetRotation_Validate(FRotator newRot);
+	void ServerSetTurretAimPos(FVector newPos);
+	virtual void ServerSetTurretAimPos_Implementation(FVector newPos);
+	virtual bool ServerSetTurretAimPos_Validate(FVector newPos);
 
 	UPROPERTY(Replicated)
-	FRotator TargetRotation;
+	FVector TurretAimPos;
 
 };

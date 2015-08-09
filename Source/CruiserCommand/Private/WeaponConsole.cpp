@@ -19,16 +19,13 @@ void AWeaponConsole::Tick(float DeltaTime)
 
 			PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 			if (Hit.bBlockingHit) {
-				//Rotation.Yaw -= 90;
-				FVector direction = Hit.ImpactPoint - GetActorLocation();
-				FRotator Rot = FRotationMatrix::MakeFromX(direction).Rotator();
-				ServerSetTargetRotation(Rot);
+				ServerSetTurretAimPos(Hit.ImpactPoint);
 			}
 		}
 		TArray<ATurret*> turrets = GetAttachedTurrets();
 		
 		for (auto& turret : turrets) {
-			turret->FollowCursor(TargetRotation, DeltaTime);
+			turret->FollowCursor(TurretAimPos, DeltaTime);
 		}
 	}
 }
@@ -78,14 +75,11 @@ TArray<ATurret*> AWeaponConsole::GetAimedTurrets(FVector mouseLocation) {
 }
 
 void AWeaponConsole::ConsoleOrder() {
-	UE_LOG(LogTemp, Warning, TEXT("ConsoleOrder()"));
 	ACCPlayerController* PC = controllingPawn->GetPlayerController();
 	if (PC) {
-		UE_LOG(LogTemp, Warning, TEXT("ConsoleOrder()"));
 		FHitResult Hit;
 		PC->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 		if (Hit.bBlockingHit) {
-			UE_LOG(LogTemp, Warning, TEXT("ConsoleOrder()"));
 			ServerFireTurrets(Hit.ImpactPoint);
 		}
 	}
@@ -103,12 +97,11 @@ bool AWeaponConsole::ServerFireTurrets_Validate(FVector mousePoint) {
 	return true;
 }
 
-void AWeaponConsole::ServerSetTargetRotation_Implementation(FRotator newRot){
-	//UE_LOG(LogTemp, Warning, TEXT("Set foo to: %f"), newRot);
-	TargetRotation = newRot;
+void AWeaponConsole::ServerSetTurretAimPos_Implementation(FVector newPos){
+	TurretAimPos = newPos;
 }
 
-bool AWeaponConsole::ServerSetTargetRotation_Validate(FRotator newRot) {
+bool AWeaponConsole::ServerSetTurretAimPos_Validate(FVector newPos) {
 	return true;
 }
 
@@ -116,5 +109,5 @@ void AWeaponConsole::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// Replicate to Everyone
-	DOREPLIFETIME(AWeaponConsole, TargetRotation);
+	DOREPLIFETIME(AWeaponConsole, TurretAimPos);
 }

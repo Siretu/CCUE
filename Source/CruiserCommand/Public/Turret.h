@@ -26,7 +26,7 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	virtual void FollowCursor(FRotator target, float delta);
+	virtual void FollowCursor(FVector target, float delta);
 
 	virtual void FireTurret(FVector target);
 	

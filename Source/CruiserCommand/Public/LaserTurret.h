@@ -30,7 +30,7 @@ public:
 
 	UClass* ProjectileBP;
 
-	virtual void FollowCursor(FRotator target, float delta) override;
+	virtual void FollowCursor(FVector target, float delta) override;
 
 	virtual void FireTurret(FVector target) override;
 };

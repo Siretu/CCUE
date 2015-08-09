@@ -36,11 +36,6 @@ public:
 	// Getters & Setters
 	FRotator GetTargetRotation();
 
-	/*UFUNCTION(Reliable, Server, WithValidation)
-	void SetTargetRotation(FRotator newRot);
-	virtual bool SetTargetRotation_Validate(FRotator newRot);
-	virtual void SetTargetRotation_Implementation(FRotator newRot);*/
-
 	UPROPERTY(Replicated)
 	FRotator TargetRotation;
 
