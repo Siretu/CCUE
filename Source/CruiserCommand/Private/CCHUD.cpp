@@ -46,7 +46,9 @@ void ACCHUD::DrawHUD() {
 
 	for (auto& bar : healthbars) {
 		UE_LOG(LogTemp, Warning, TEXT("Bar"));
-		DrawRect(FLinearColor(0, 1, 0), 150, 150, 200, 20);
+		FVector2D result;
+		GetOwningPlayerController()->ProjectWorldLocationToScreen(bar->GetOwner()->GetActorLocation(), result);
+		DrawRect(FLinearColor(0, 1, 0), result.X, result.Y, 200, 20);
 	}
 }
 

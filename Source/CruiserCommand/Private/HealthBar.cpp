@@ -27,11 +27,11 @@ void UHealthBar::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (health == 0) {
-		UE_LOG(LogTemp, Warning, TEXT("Healthbar tick"));
 		APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 		if (PC) {
 			ACCHUD* hud = Cast<ACCHUD>(PC->GetHUD());
 			if (hud) {
+				UE_LOG(LogTemp, Warning, TEXT("Healthbar tick"));
 				hud->RegisterHealthbar(this);
 				health = 100;
 			}
