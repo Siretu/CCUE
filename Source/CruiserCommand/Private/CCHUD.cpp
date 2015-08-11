@@ -9,6 +9,7 @@
 ACCHUD::ACCHUD(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	CameraEdge = 50;
 	UE_LOG(LogTemp, Warning, TEXT("HUD Initialized"));
+
 }
 
 /** Creates all the hitboxes for handling edge scrolling */
@@ -41,6 +42,16 @@ void ACCHUD::DrawHitBox(FVector2D pos, FVector2D size, FName name, bool showOver
 void ACCHUD::DrawHUD() {
 	Super::DrawHUD();
 	CreateCameraHitboxes();
+
+
+	for (auto& bar : healthbars) {
+		UE_LOG(LogTemp, Warning, TEXT("Bar"));
+		DrawRect(FLinearColor(0, 1, 0), 150, 150, 200, 20);
+	}
+}
+
+void ACCHUD::RegisterHealthbar(UHealthBar* bar) {
+	healthbars.Add(bar);
 }
 
 void ACCHUD::ReceiveHitBoxClick(const FName BoxName) {

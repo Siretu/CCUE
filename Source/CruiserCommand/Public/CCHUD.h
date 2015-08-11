@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/HUD.h"
+#include "HealthBar.h"
 #include "CCHUD.generated.h"
 
 /**
@@ -18,6 +19,10 @@ class CRUISERCOMMAND_API ACCHUD : public AHUD
 	// The edge of the border of edge scrolling hitboxes to add around the screen. 
 	// Effectively determining how close to the edge you can move your cursor before the camera starts moving.
 	float CameraEdge;
+public:
+	TArray<UHealthBar*> healthbars;
+
+	void RegisterHealthbar(UHealthBar* bar);
 
 	/** Creates all the hitboxes for handling edge scrolling */
 	void CreateCameraHitboxes();
