@@ -70,5 +70,5 @@ void AProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVec
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), CollisionEffect, this->GetActorLocation());
 	Destroy();
 
-	OtherActor->TakeDamage(10, FDamageEvent(), this->GetInstigatorController(), this);
+	OtherActor->TakeDamage(1, FDamageEvent(), this->GetInstigatorController(), this);
 }

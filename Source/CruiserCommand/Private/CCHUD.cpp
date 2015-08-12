@@ -4,6 +4,8 @@
 #include "CCHUD.h"
 #include "CCPlayerController.h"
 #include "PlayerCamera.h"
+#include "Kismet/KismetMathLibrary.h"
+
 
 
 ACCHUD::ACCHUD(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
@@ -40,20 +42,48 @@ void ACCHUD::DrawHitBox(FVector2D pos, FVector2D size, FName name, bool showOver
 }
 
 void ACCHUD::DrawHealthbar(FVector pos, double percentage) {
-	FVector2D size = FVector2D(200, 20);
+
+	FVector2D size = FVector2D((boxWidth + borderSize) * nrHealthBoxes + borderSize, 20);
 	FVector2D offset = FVector2D(-size.X / 2, -size.Y / 2);
 	offset.Y -= 200;
-	double borderSize = 2;
 
 	FVector2D result;
 	GetOwningPlayerController()->ProjectWorldLocationToScreen(pos, result);
 
 	// Draw border
-	DrawRect(FLinearColor(0, 0, 0), result.X + offset.X - borderSize, result.Y + offset.Y - borderSize, size.X + borderSize * 2, size.Y + borderSize * 2);
+	DrawRect(FLinearColor(0, 0, 0, initialOpacity), result.X + offset.X - borderSize, result.Y + offset.Y - borderSize, size.X, size.Y + borderSize * 2);
+
+	// Draw box backgrounds
+	for (int i = 0; i < nrHealthBoxes; ++i) {
+		DrawRect(FLinearColor(0.1, 0.1, 0.1, initialOpacity), result.X + offset.X + (borderSize + boxWidth) * i, result.Y + offset.Y, boxWidth, size.Y);
+	}
+
+	// Draw boxes
+	for (int i = 0; i < nrHealthBoxes; ++i) {
+		double opacity = FMath::Max(initialOpacity * ((float) (i+1) / nrHealthBoxes), 0.9);
+		double opacityPerBox = initialOpacity / nrHealthBoxes;
+		UE_LOG(LogTemp, Warning, TEXT("%f"), percentage);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), (float)(i + 1) / nrHealthBoxes);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), percentage - (float)(i + 1) / nrHealthBoxes);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), ((float)(i + 1) / nrHealthBoxes) / opacityPerBox);
+		if ((float) (i + 1) / nrHealthBoxes <= percentage) {
+			opacity = initialOpacity;
+		} else {
+			opacity = initialOpacity - ((float)(i + 1) / nrHealthBoxes - percentage) / opacityPerBox;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Set opacity for %d to %f"), i, opacity);
+		double red = FMath::Clamp(-2 * percentage + 2, 0.0, 1.0);
+		double green = FMath::Clamp(2 * percentage, 0.0, 1.0);
+		DrawHealthBox(FVector2D(result.X + offset.X + (borderSize + boxWidth) * i, result.Y + offset.Y), FLinearColor(red, green, 0), opacity);
+	}
 
 	// Draw bar
-	DrawRect(FLinearColor(0, 1, 0), result.X + offset.X, result.Y + offset.Y, size.X * percentage, size.Y);
+	//DrawRect(FLinearColor(0, 1, 0), result.X + offset.X, result.Y + offset.Y, size.X * percentage, size.Y);
+}
 
+void ACCHUD::DrawHealthBox(FVector2D pos, FLinearColor color, double opacity) {
+	FLinearColor transparentColor = color.CopyWithNewOpacity(opacity);
+	DrawRect(transparentColor, pos.X, pos.Y, boxWidth, 20);
 }
 
 void ACCHUD::DrawHUD() {

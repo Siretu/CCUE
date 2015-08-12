@@ -21,6 +21,11 @@ class CRUISERCOMMAND_API ACCHUD : public AHUD
 	float CameraEdge;
 public:
 	TArray<UHealthBar*> healthbars;
+	int nrHealthBoxes = 10;
+	double boxWidth = 20;
+	double initialOpacity = 0.7;
+	double borderSize = 2;
+
 
 	void RegisterHealthbar(UHealthBar* bar);
 
@@ -30,6 +35,7 @@ public:
 	void DrawHitBox(FVector2D pos, FVector2D size, FName name, bool showOverlay, FLinearColor color);
 
 	void DrawHealthbar(FVector pos, double percentage);
+	void DrawHealthBox(FVector2D pos, FLinearColor color, double opacity);
 
 	virtual void DrawHUD() override;
 

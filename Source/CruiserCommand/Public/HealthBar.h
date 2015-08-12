@@ -20,6 +20,7 @@ public:
 
 	double maxHealth;
 	double health;
+	
 
 	ACCHUD* hud;
 	
