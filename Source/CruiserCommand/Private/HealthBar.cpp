@@ -44,3 +44,12 @@ void UHealthBar::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 double UHealthBar::GetPercentage() {
 	return health / maxHealth;
 }
+
+bool UHealthBar::Damage(float amount) {
+	health -= amount;
+	if (health < 0) {
+		health = 0;
+		return true;
+	}
+	return false;
+}

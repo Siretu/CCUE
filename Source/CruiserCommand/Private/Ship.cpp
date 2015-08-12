@@ -3,6 +3,7 @@
 #include "CruiserCommand.h"
 #include "CruiserCommandCharacter.h"
 #include "Ship.h"
+#include "HealthBar.h"
 
 AShip::AShip() {
 	bReplicates = true;
@@ -26,11 +27,6 @@ AShip::AShip() {
 //	ActivationBox->SetBoxExtent(FVector(620, 500, 50));
 //	//ActivationBox->SetRelativeScale3D(FVector(200, 200, 2));
 //	ActivationBox->OnComponentBeginOverlap.AddDynamic(this, &AShip::EnterConsole);
-}
-
-
-void AShip::EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult) {
-	UE_LOG(LogTemp, Warning, TEXT("Collision"));
 }
 
 
@@ -82,4 +78,12 @@ void AShip::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifet
 	UE_LOG(LogTemp, Warning, TEXT("Foo"));
 	// Replicate to Everyone
 	DOREPLIFETIME(AShip, TargetRotation);
+}
+
+float AShip::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCause) {
+	UHealthBar* bar = Cast<UHealthBar>(GetComponentByClass(UHealthBar::StaticClass()));
+	bar->Damage(DamageAmount);
+	UE_LOG(LogTemp, Warning, TEXT("Damage"));
+
+	return DamageAmount;
 }

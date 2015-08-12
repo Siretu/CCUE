@@ -41,8 +41,8 @@ public:
 
 	UBoxComponent* ActivationBox;
 
-	UFUNCTION()
-	virtual void EnterConsole(class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCause) override;
+
 
 protected:
 

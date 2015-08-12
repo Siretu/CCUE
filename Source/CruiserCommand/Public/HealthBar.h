@@ -31,5 +31,6 @@ public:
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
 	double GetPercentage();
-	
+
+	bool Damage(float amount);
 };

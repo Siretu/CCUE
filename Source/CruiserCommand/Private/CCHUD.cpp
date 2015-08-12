@@ -62,7 +62,6 @@ void ACCHUD::DrawHUD() {
 
 
 	for (auto& bar : healthbars) {
-		UE_LOG(LogTemp, Warning, TEXT("Bar"));
 		DrawHealthbar(bar->GetOwner()->GetActorLocation(), bar->GetPercentage());
 	}
 }
