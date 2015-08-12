@@ -11,7 +11,7 @@ UHealthBar::UHealthBar() {
 	// off to improve performance if you don't need them.
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
-
+	maxHealth = 100;
 	health = 0; // Hack to only register healthbar once. TODO: Fix
 }
 
@@ -33,9 +33,14 @@ void UHealthBar::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 			if (hud) {
 				UE_LOG(LogTemp, Warning, TEXT("Healthbar tick"));
 				hud->RegisterHealthbar(this);
-				health = 100;
+				health = maxHealth;
 			}
 		}
+	} else {
+		health -= 0.01;
 	}
 }
 
+double UHealthBar::GetPercentage() {
+	return health / maxHealth;
+}

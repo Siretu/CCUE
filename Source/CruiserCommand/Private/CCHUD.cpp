@@ -39,6 +39,23 @@ void ACCHUD::DrawHitBox(FVector2D pos, FVector2D size, FName name, bool showOver
 	}
 }
 
+void ACCHUD::DrawHealthbar(FVector pos, double percentage) {
+	FVector2D size = FVector2D(200, 20);
+	FVector2D offset = FVector2D(-size.X / 2, -size.Y / 2);
+	offset.Y -= 200;
+	double borderSize = 2;
+
+	FVector2D result;
+	GetOwningPlayerController()->ProjectWorldLocationToScreen(pos, result);
+
+	// Draw border
+	DrawRect(FLinearColor(0, 0, 0), result.X + offset.X - borderSize, result.Y + offset.Y - borderSize, size.X + borderSize * 2, size.Y + borderSize * 2);
+
+	// Draw bar
+	DrawRect(FLinearColor(0, 1, 0), result.X + offset.X, result.Y + offset.Y, size.X * percentage, size.Y);
+
+}
+
 void ACCHUD::DrawHUD() {
 	Super::DrawHUD();
 	CreateCameraHitboxes();
@@ -46,11 +63,10 @@ void ACCHUD::DrawHUD() {
 
 	for (auto& bar : healthbars) {
 		UE_LOG(LogTemp, Warning, TEXT("Bar"));
-		FVector2D result;
-		GetOwningPlayerController()->ProjectWorldLocationToScreen(bar->GetOwner()->GetActorLocation(), result);
-		DrawRect(FLinearColor(0, 1, 0), result.X, result.Y, 200, 20);
+		DrawHealthbar(bar->GetOwner()->GetActorLocation(), bar->GetPercentage());
 	}
 }
+
 
 void ACCHUD::RegisterHealthbar(UHealthBar* bar) {
 	healthbars.Add(bar);

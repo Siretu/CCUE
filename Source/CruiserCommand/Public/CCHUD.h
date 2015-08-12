@@ -29,6 +29,8 @@ public:
 	/** Helper function to add a hitbox and optionally draw a rect at the same position for debugging purposes */
 	void DrawHitBox(FVector2D pos, FVector2D size, FName name, bool showOverlay, FLinearColor color);
 
+	void DrawHealthbar(FVector pos, double percentage);
+
 	virtual void DrawHUD() override;
 
 	virtual void NotifyHitBoxBeginCursorOver(const FName BoxName) override;

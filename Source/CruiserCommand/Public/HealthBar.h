@@ -18,6 +18,7 @@ public:
 	// Sets default values for this component's properties
 	UHealthBar();
 
+	double maxHealth;
 	double health;
 
 	ACCHUD* hud;
@@ -29,6 +30,6 @@ public:
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
 
-	
+	double GetPercentage();
 	
 };
