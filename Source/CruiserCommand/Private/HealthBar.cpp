@@ -12,7 +12,7 @@ UHealthBar::UHealthBar() {
 	bWantsBeginPlay = true;
 	PrimaryComponentTick.bCanEverTick = true;
 	maxHealth = 100;
-	health = 0; // Hack to only register healthbar once. TODO: Fix
+	health = -1; // Hack to only register healthbar once. TODO: Fix
 }
 
 
@@ -26,7 +26,7 @@ void UHealthBar::BeginPlay() {
 void UHealthBar::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (health == 0) {
+	if (health == -1) {
 		APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
 		if (PC) {
 			ACCHUD* hud = Cast<ACCHUD>(PC->GetHUD());
@@ -37,7 +37,7 @@ void UHealthBar::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 			}
 		}
 	} else {
-		health -= 0.01;
+		//health -= 0.01;
 	}
 }
 
