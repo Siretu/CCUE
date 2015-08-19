@@ -25,6 +25,9 @@ public:
 
 	void EnterShip(ACruiserCommandCharacter* character);
 
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 	// Variables
 	UPROPERTY(Replicated)
 	float RotationSpeed;
@@ -32,6 +35,15 @@ public:
 	float CurrentSpeed;
 	bool bBlocked;
 	FVector EnterPosition; // When a character enters the ship, it will be transferred to this position. Not used yet.
+
+	// Components
+	/** Component root that everything attaches to */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Components)
+	USceneComponent* Root;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Components)
+	UStaticMeshComponent* Mesh;
+	UClass* TurretClass;
 
 	// Getters & Setters
 	FRotator GetTargetRotation();

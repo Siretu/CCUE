@@ -20,15 +20,42 @@ AShip::AShip() {
 	MovementSpeed = 100;
 	CurrentSpeed = 0.0f;
 
-//	USceneComponent* Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
-//	RootComponent = Root;
-//	ActivationBox = CreateDefaultSubobject<UBoxComponent>(TEXT("dummy"));
-////	ActivationBox->AttachParent = RootComponent;
-//	ActivationBox->SetBoxExtent(FVector(620, 500, 50));
-//	//ActivationBox->SetRelativeScale3D(FVector(200, 200, 2));
-//	ActivationBox->OnComponentBeginOverlap.AddDynamic(this, &AShip::EnterConsole);
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
+	RootComponent = Root;
+	Root->SetIsReplicated(true);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> BC_Mesh(TEXT("StaticMesh'/Game/Models/BC2.BC2'"));
+	static ConstructorHelpers::FObjectFinder<UMaterial> Tech_Material(TEXT("Material'/Game/StarterContent/Materials/M_Tech_Checker_Dot.M_Tech_Checker_Dot'"));
+	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("mesh"));
+	Mesh->SetStaticMesh(BC_Mesh.Object);
+	Mesh->SetMaterial(0, Tech_Material.Object);
+	Mesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	Mesh->SetConstraintMode(EDOFMode::XYPlane);
+	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_Vehicle);
+	Mesh->SetSimulatePhysics(true);
+	Mesh->AttachParent = Root;
+
+	UHealthBar* health = CreateDefaultSubobject<UHealthBar>(TEXT("healthbar"));
+
+
+	static ConstructorHelpers::FObjectFinder<UClass> Turret(TEXT("Class'/Script/CruiserCommand.LaserTurret'"));
+	TurretClass = Turret.Object;
+
+
+
 }
 
+void AShip::BeginPlay() {
+	FVector Location = FVector(0,0,0);
+	FRotator Rotation = FRotator(0, -60, 0);
+	FActorSpawnParameters SpawnParams;
+	//SpawnParams.Owner = this;
+	SpawnParams.bNoCollisionFail = true;
+
+	// Spawn the actual player character at the location
+	AActor* turret = GetWorld()->SpawnActor(TurretClass, &Location, &Rotation, SpawnParams);
+	turret->AttachRootComponentTo(Mesh);
+}
 
 void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent) {
 	// Set up gameplay key bindings. Currently none

@@ -17,7 +17,10 @@ void ATurret::BeginPlay() {
 	Super::BeginPlay();
 	
 	this->originalRotation = this->GetActorRotation().Yaw + 360;
-	double parentRotation = GetAttachParentActor()->GetActorRotation().Yaw;
+	double parentRotation = 0;
+	if (GetAttachParentActor()) {
+		parentRotation = GetAttachParentActor()->GetActorRotation().Yaw;
+	}
 	this->originalRotation -= parentRotation;
 	//this->TargetRotation = FRotator(0,originalRotation,0);
 	UE_LOG(LogTemp, Warning, TEXT("Orig rotation: %f"), this->originalRotation);
