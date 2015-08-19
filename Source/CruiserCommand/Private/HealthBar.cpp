@@ -31,7 +31,6 @@ void UHealthBar::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 		if (PC) {
 			ACCHUD* hud = Cast<ACCHUD>(PC->GetHUD());
 			if (hud) {
-				UE_LOG(LogTemp, Warning, TEXT("Healthbar tick"));
 				hud->RegisterHealthbar(this);
 				health = maxHealth;
 			}

@@ -62,16 +62,16 @@ void ACCHUD::DrawHealthbar(FVector pos, double percentage) {
 	for (int i = 0; i < nrHealthBoxes; ++i) {
 		double opacity = FMath::Max(initialOpacity * ((float) (i+1) / nrHealthBoxes), 0.9);
 		double opacityPerBox = initialOpacity / nrHealthBoxes;
-		UE_LOG(LogTemp, Warning, TEXT("%f"), percentage);
-		UE_LOG(LogTemp, Warning, TEXT("%f"), (float)(i + 1) / nrHealthBoxes);
-		UE_LOG(LogTemp, Warning, TEXT("%f"), percentage - (float)(i + 1) / nrHealthBoxes);
-		UE_LOG(LogTemp, Warning, TEXT("%f"), ((float)(i + 1) / nrHealthBoxes) / opacityPerBox);
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), percentage);
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), (float)(i + 1) / nrHealthBoxes);
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), percentage - (float)(i + 1) / nrHealthBoxes);
+		//UE_LOG(LogTemp, Warning, TEXT("%f"), ((float)(i + 1) / nrHealthBoxes) / opacityPerBox);
 		if ((float) (i + 1) / nrHealthBoxes <= percentage) {
 			opacity = initialOpacity;
 		} else {
 			opacity = initialOpacity - ((float)(i + 1) / nrHealthBoxes - percentage) / opacityPerBox;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Set opacity for %d to %f"), i, opacity);
+		//UE_LOG(LogTemp, Warning, TEXT("Set opacity for %d to %f"), i, opacity);
 		double red = FMath::Clamp(-2 * percentage + 2, 0.0, 1.0);
 		double green = FMath::Clamp(2 * percentage, 0.0, 1.0);
 		DrawHealthBox(FVector2D(result.X + offset.X + (borderSize + boxWidth) * i, result.Y + offset.Y), FLinearColor(red, green, 0), opacity);
