@@ -40,9 +40,6 @@ AShip::AShip() {
 
 	static ConstructorHelpers::FObjectFinder<UClass> Turret(TEXT("Class'/Script/CruiserCommand.LaserTurret'"));
 	TurretClass = Turret.Object;
-
-
-
 }
 
 void AShip::BeginPlay() {

@@ -9,7 +9,6 @@ ALaserTurret::ALaserTurret() {
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 	RootComponent = Root;
-	Root->SetIsReplicated(true);
 
 	Base = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("base"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Sphere(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
