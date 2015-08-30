@@ -6,9 +6,11 @@
 
 ALaserTurret::ALaserTurret() {
 	PrimaryActorTick.bCanEverTick = true;
+	SetReplicates(true);
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("root"));
 	RootComponent = Root;
+
 
 	Base = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("base"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> StaticMesh_Sphere(TEXT("StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
@@ -33,6 +35,9 @@ ALaserTurret::ALaserTurret() {
 }
 
 void ALaserTurret::FollowCursor(FVector target, float delta) {
+	if (Role == ROLE_Authority) {
+		UE_LOG(LogTemp, Warning, TEXT("Following cursor"));
+	}
 	FVector direction = target - GetActorLocation();
 	FRotator Rot = FRotationMatrix::MakeFromX(direction).Rotator();
 	FRotator nextRot = FMath::RInterpConstantTo(GetActorRotation(), Rot, delta, RotationSpeed);
